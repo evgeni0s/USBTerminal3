@@ -3,9 +3,181 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        xmlns:core="clr-namespace:USBTerminal.Core;assembly=USBTerminal.Core"
+        xmlns:core="clr-namespace:USBTerminal.Core;assembly=USBTerminal.Core" 
+        xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core"
         Title="{Binding Title}" Height="350" Width="525" >
-    <Grid>
-        <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.ContentRegion}" />
+    <Window.Resources>
+        <!--https://github.com/MahApps/MahApps.Metro-->
+
+        <ResourceDictionary>
+            <utils:VisibilityConverter x:Key="boolToVis" />
+        </ResourceDictionary>
+
+    </Window.Resources>
+
+    <Grid Margin="0,0,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ItemsControl Grid.Column="2" prism:RegionManager.RegionName="TestRegion" />
+        <!--  logo  -->
+        <Canvas x:Name="Logo"
+                Grid.ColumnSpan="2"
+                RenderTransformOrigin="0.5,0.5">
+                <!--Background="{StaticResource ElectronicCircuitBrush}"-->
+            <!--<Canvas.Background>
+                <ImageBrush AlignmentX="Left"
+                    ImageSource="/USBTerminal.Core;Component/Resources/Electronic_circuit.jpg"
+                    Stretch="UniformToFill" />
+            </Canvas.Background>-->
+            <Canvas.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Canvas.RenderTransform>
+            <TextBlock Canvas.Left="0"
+                       Canvas.Top="5"
+                       Width="135"
+                       Height="80"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Opacity="0.85"
+                       Text="USB "
+                       TextAlignment="Left"
+                       TextWrapping="NoWrap" />
+            <TextBlock Canvas.Left="150"
+                       Canvas.Top="5"
+                       Width="525"
+                       Height="80"
+                       FontSize="72"
+                       FontWeight="Normal"
+                       Foreground="White"
+                       Opacity="0.85"
+                       Text="  TERMINAL"
+                       TextAlignment="Left"
+                       TextWrapping="NoWrap" />
+
+        </Canvas>
+        <ToggleButton Grid.Row="1"
+                      Grid.Column="1"
+                      Width="120"
+                      Height="25"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Right"
+                      Command="{Binding MeasureCommand}"
+                      Content="Measure"
+                      FontStyle="Oblique"
+                      FontWeight="Bold"
+                      Foreground="White"
+                      IsEnabled="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                          Path=IsChecked,
+                                          Converter={StaticResource InvertedBoolConverter},
+                                          Mode=OneWay}"
+                      Style="{StaticResource ConnectButtonStyle}">
+            <ToggleButton.Triggers>
+                <EventTrigger RoutedEvent="Button.Click">
+                    <BeginStoryboard>
+                        <Storyboard FillBehavior="Stop">
+                            <StringAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentPresenter.Content)">
+                                <DiscreteStringKeyFrame KeyTime="0" Value="Wait 4" />
+                                <DiscreteStringKeyFrame KeyTime="0:0:1" Value="Wait 3" />
+                                <DiscreteStringKeyFrame KeyTime="0:0:2" Value="Wait 2" />
+                                <DiscreteStringKeyFrame KeyTime="0:0:3" Value="Wait 1" />
+                                <DiscreteStringKeyFrame KeyTime="0:0:4" Value="Done!" />
+                            </StringAnimationUsingKeyFrames>
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(ToggleButton.IsChecked)">
+                                <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
+                                <DiscreteBooleanKeyFrame KeyTime="0:0:5" Value="False" />
+                            </BooleanAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(ToggleButton.Foreground).Color">
+                                <LinearColorKeyFrame KeyTime="0" Value="Black" />
+                            </ColorAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </ToggleButton.Triggers>
+        </ToggleButton>
+        <!--<toolbar:ToolBarView x:Name="customToolbar"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="2"
+                             Width="560"
+                             Height="38"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             Background="{DynamicResource AccentColorBrush}"
+                             DataContext="{Binding ToolBar}" />-->
+        <Rectangle x:Name="customToolbar"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="2"
+                             Width="560"
+                             Height="38"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             DataContext="{Binding ToolBar}" />
+
+        <Grid Grid.Row="2"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              Margin="0,0,0,0"
+              VerticalAlignment="Stretch">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform />
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Grid.RenderTransform>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  <chart:ChartPlotter x:Name="mPlotter"  Grid.Column="1" LegendVisible="False"/>  -->
+            <!--  CONTENT CONTROL VS ITEMS CONTROL  -->
+            <!--
+                Content control provides SingleActiveView
+                ItemsControl provides AllActiveViews
+            -->
+            <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.MainRegion}" 
+                            Margin="0,20,0,0"/>
+            <!--  <ContentControl prism:RegionManager.RegionName="{x:Static Inf:RegionNames.LegendRegion}" Grid.Column="1" Margin="50,10,0,0"  HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.ZIndex="1"/>  -->
+            <ContentControl Grid.RowSpan="99"
+                            Grid.Column="0"
+                            Margin="0,20,0,0"
+                            Background="Brown"
+                            prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftPanelRegion}" />
+
+            <ItemsControl Grid.Row="3"
+                          Grid.Column="1"
+                          Grid.ColumnSpan="2"
+                          Margin="0,2,0,0"
+                          prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}" />
+        </Grid>
+
     </Grid>
+    <!--<Grid>
+        <ContentControl prism:RegionManager.RegionName="{x:Static core:RegionNames.ContentRegion}" />
+    </Grid>-->
 </Window>

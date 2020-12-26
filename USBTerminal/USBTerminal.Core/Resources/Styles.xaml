@@ -138,6 +138,10 @@
     <SolidColorBrush x:Key="LightColorBrush" Color="#DDD" />
 
     <SolidColorBrush x:Key="DynamicGridHeaderBrush" Color="#FFF" />
+
+    <ImageBrush x:Key="ElectronicCircuitBrush" AlignmentX="Left"
+                    ImageSource="/Resources/Electronic_circuit.jpg"
+                    Stretch="UniformToFill" />
     <!-- Button -->
 
     <Style TargetType="{x:Type Button}">
