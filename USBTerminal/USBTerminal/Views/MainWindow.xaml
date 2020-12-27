@@ -7,8 +7,6 @@
         xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core"
         Title="{Binding Title}" Height="350" Width="525" >
     <Window.Resources>
-        <!--https://github.com/MahApps/MahApps.Metro-->
-
         <ResourceDictionary>
             <utils:VisibilityConverter x:Key="boolToVis" />
         </ResourceDictionary>
@@ -28,16 +26,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ItemsControl Grid.Column="2" prism:RegionManager.RegionName="TestRegion" />
-        <!--  logo  -->
         <Canvas x:Name="Logo"
                 Grid.ColumnSpan="2"
                 RenderTransformOrigin="0.5,0.5">
-                <!--Background="{StaticResource ElectronicCircuitBrush}"-->
-            <!--<Canvas.Background>
-                <ImageBrush AlignmentX="Left"
-                    ImageSource="/USBTerminal.Core;Component/Resources/Electronic_circuit.jpg"
-                    Stretch="UniformToFill" />
-            </Canvas.Background>-->
             <Canvas.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform />
@@ -111,16 +102,6 @@
                 </EventTrigger>
             </ToggleButton.Triggers>
         </ToggleButton>
-        <!--<toolbar:ToolBarView x:Name="customToolbar"
-                             Grid.Row="1"
-                             Grid.Column="0"
-                             Grid.ColumnSpan="2"
-                             Width="560"
-                             Height="38"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Center"
-                             Background="{DynamicResource AccentColorBrush}"
-                             DataContext="{Binding ToolBar}" />-->
         <Rectangle x:Name="customToolbar"
                              Grid.Row="1"
                              Grid.Column="0"
@@ -153,16 +134,9 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-
-            <!--  <chart:ChartPlotter x:Name="mPlotter"  Grid.Column="1" LegendVisible="False"/>  -->
-            <!--  CONTENT CONTROL VS ITEMS CONTROL  -->
-            <!--
-                Content control provides SingleActiveView
-                ItemsControl provides AllActiveViews
-            -->
             <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.MainRegion}" 
                             Margin="0,20,0,0"/>
-            <!--  <ContentControl prism:RegionManager.RegionName="{x:Static Inf:RegionNames.LegendRegion}" Grid.Column="1" Margin="50,10,0,0"  HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.ZIndex="1"/>  -->
+            
             <ContentControl Grid.RowSpan="99"
                             Grid.Column="0"
                             Margin="0,20,0,0"

@@ -1,6 +1,7 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
+using USBTerminal.Modules.Console;
 using USBTerminal.Modules.ModuleName;
 using USBTerminal.Services;
 using USBTerminal.Services.Interfaces;
@@ -26,6 +27,7 @@ namespace USBTerminal
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             moduleCatalog.AddModule<ModuleNameModule>();
+            moduleCatalog.AddModule<ConsoleModule>();
         }
     }
 }
