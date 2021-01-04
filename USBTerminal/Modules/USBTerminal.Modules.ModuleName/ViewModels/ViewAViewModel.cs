@@ -1,4 +1,5 @@
 ﻿using Prism.Regions;
+using Serilog;
 using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces;
 
@@ -13,8 +14,8 @@ namespace USBTerminal.Modules.ModuleName.ViewModels
             set { SetProperty(ref _message, value); }
         }
 
-        public ViewAViewModel(IRegionManager regionManager, IMessageService messageService) :
-            base(regionManager)
+        public ViewAViewModel(IRegionManager regionManager, ILogger logger, IMessageService messageService) :
+            base(regionManager, logger)
         {
             Message = messageService.GetMessage();
         }

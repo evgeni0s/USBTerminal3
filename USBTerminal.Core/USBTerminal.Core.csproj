@@ -5,11 +5,84 @@
     <AssemblyName>USBTerminal.Core</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+    <None Remove="Resources\AppIcon.ico" />
+    <None Remove="Resources\circle_more_detail-512.png" />
+    <None Remove="Resources\clean_brush-512.png" />
+    <None Remove="Resources\Close.png" />
+    <None Remove="Resources\Delete_Icon.png" />
+    <None Remove="Resources\Delete_Icon_small.png" />
+    <None Remove="Resources\Electronic_circuit.jpg" />
+    <None Remove="Resources\excel-icon.png" />
+    <None Remove="Resources\Gitar-mobile-app-icons.jpg" />
+    <None Remove="Resources\integrated-circuit-256-Orange.png" />
+    <None Remove="Resources\integrated-circuit-256.png" />
+    <None Remove="Resources\markers_graph.png" />
+    <None Remove="Resources\Metal_plate.jpg" />
+    <None Remove="Resources\Metal_plate520.jpg" />
+    <None Remove="Resources\Metal_plate820.jpg" />
+    <None Remove="Resources\Notepad_icon.png" />
+    <None Remove="Resources\Refresh.png" />
+    <None Remove="Resources\save_as.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Resources\Electronic_circuit.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="MahApps.Metro" Version="2.4.3" />
+    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AppIcon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\circle_more_detail-512.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\clean_brush-512.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Close.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Delete_Icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Delete_Icon_small.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Electronic_circuit.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\excel-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Gitar-mobile-app-icons.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\integrated-circuit-256-Orange.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\integrated-circuit-256.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\markers_graph.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Metal_plate.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Metal_plate520.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Metal_plate820.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Notepad_icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Refresh.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\save_as.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 </Project>

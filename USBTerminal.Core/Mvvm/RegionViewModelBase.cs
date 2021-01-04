@@ -1,15 +1,18 @@
 ﻿using Prism.Regions;
+using Serilog;
 using System;
 
 namespace USBTerminal.Core.Mvvm
 {
     public class RegionViewModelBase : ViewModelBase, INavigationAware, IConfirmNavigationRequest
     {
-        protected IRegionManager RegionManager { get; private set; }
+        protected IRegionManager RegionManager { get;  }
+        protected ILogger Logger { get; }
 
-        public RegionViewModelBase(IRegionManager regionManager)
+        public RegionViewModelBase(IRegionManager regionManager, ILogger logger)
         {
             RegionManager = regionManager;
+            Logger = logger;
         }
 
         public virtual void ConfirmNavigationRequest(NavigationContext navigationContext, Action<bool> continuationCallback)

@@ -5,7 +5,10 @@
     <AssemblyName>USBTerminal.Modules.Console</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MahApps.Metro" Version="2.4.3" />
+    <PackageReference Include="MvvmDialogs" Version="8.0.0" />
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\USBTerminal.Core\USBTerminal.Core.csproj" />

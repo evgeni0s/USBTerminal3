@@ -10,64 +10,59 @@ using System.Windows.Input;
 using USBTerminal.Modules.Console.Views;
 using Prism.Regions;
 using USBTerminal.Core.Mvvm;
+using Prism.Commands;
+using MvvmDialogs;
+using MvvmDialogs.FrameworkDialogs.SaveFile;
+using IOPath = System.IO.Path;
+using System.Reflection;
+using USBTerminal.Core.Interfaces.Console;
+using Serilog;
 
 namespace USBTerminal.Modules.Console.ViewModels
 {
     public class ConsoleViewModel: RegionViewModelBase
     {
-        //private IExportModule _exportModule;
-        //private ILoggerFacade _logger;
-        //public ConsoleViewModel(ILoggerFacade logger, IExportModule exportModule)
-        //{
-        //    _consolePresenter = logger as CustomRichTextBox;
-        //    //Model = logger;
-        //    _exportModule = exportModule;
-        //    _logger = logger;
-        //}
-
-        //public ConsoleViewModel(IRegionManager regionManager)
-        //    base: (regionManager)
-        //{
-
-        //}
-
-        public ConsoleViewModel(IRegionManager regionManager)
-            : base(regionManager)
+        private readonly IDialogService dialogService;
+        private DelegateCommand saveCommand;
+        public ConsoleViewModel(IRegionManager regionManager, 
+            ILogger logger, 
+            IDialogService dialogService,
+            ITextBoxLogger textBoxLogger)
+            : base(regionManager, logger)
         {
-
+            this.dialogService = dialogService;
+            TextBoxLogger = textBoxLogger;
         }
 
-        private CustomRichTextBox _consolePresenter;
-        public CustomRichTextBox ConsolePresenter
+        public ITextBoxLogger TextBoxLogger { get; }
+
+        public DelegateCommand SaveCommand =>
+            saveCommand ?? (saveCommand = new DelegateCommand(ExecuteSaveCommand));
+
+        private void ExecuteSaveCommand()
         {
-            get { return _consolePresenter; }
-        }
+            var settings = new SaveFileDialogSettings
+            {
+                Title = "This Is The Title",
+                InitialDirectory = IOPath.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                Filter = "Text Documents (*.txt)|*.txt|All Files (*.*)|*.*",
+                CheckFileExists = false
+            };
 
-
-        private ICommand _saveCommand;
-        public ICommand SaveCommand
-        {
-            get { return _saveCommand; }// ?? (_saveCommand = new RelayCommand(OnSave)); }
-        }
-
-        private void OnSave(object obj)
-        {
-
-            //_exportModule.ShowFileBrowserView(OnUserSelelectedFile);
-        }
-
-        private void OnUserSelelectedFile(string obj)
-        {
-            //try
-            //{
-            //    File.WriteAllText(obj, ConsolePresenter.GetText());
-            //    Process.Start(obj);
-            //    _logger.Log("Console's content is saved to:" + Environment.NewLine + obj, Category.Info, Priority.Medium);
-            //}
-            //catch (Exception e)
-            //{
-            //    _logger.Log("Error saveing or opening file!" + Environment.NewLine + " Exception message: " + Environment.NewLine + e.Message, Category.Exception, Priority.Medium);
-            //}
+            bool? success = dialogService.ShowSaveFileDialog(this, settings);
+            if (success == true)
+            {
+                try
+                {
+                    File.WriteAllText(settings.FileName, TextBoxLogger.GetText());
+                    Logger.Information("Content from console saved in file.");
+                    Process.Start(new ProcessStartInfo(settings.FileName) { UseShellExecute = true });
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Error saveing console's content");
+                }
+            }
         }
     }
 }

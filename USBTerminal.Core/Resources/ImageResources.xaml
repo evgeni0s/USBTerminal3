@@ -1,6 +1,7 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <BitmapImage x:Key="Notepad_icon" UriSource="/Resources/Notepad_icon.png" />
     <BitmapImage x:Key="excel-icon" UriSource="/Resources/excel-icon.png" />
+    <BitmapImage x:Key="clean_brush" UriSource="/Resources/clean_brush-512.png" />
 </ResourceDictionary>
