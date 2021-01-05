@@ -14,12 +14,23 @@
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
             <RowDefinition />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <ContentControl Content="{Binding TextBoxLogger}" />
-        <Border Grid.Row="1">
-            <Border Background="LightGreen" CornerRadius="0,0,20,20">
+        <Border>
+            <Border Background="#FF6E51AC" CornerRadius="20,20,0,0">
+                <Label Content="{Binding Title}" 
+                       FontSize="18" 
+                       FontFamily="Verdana"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"/>
+            </Border>
+        </Border>
+        <ContentControl Grid.Row="1" Content="{Binding CustomRichTextBox}"/>
+        <Border Grid.Row="2">
+            <Border Background="#FF6E51AC" CornerRadius="0,0,20,20">
                 <Grid>
                     <StackPanel Width="Auto"
                                 Margin="20,0"
@@ -29,7 +40,8 @@
                                 Margin="10,0,0,0"
                                 ToolTip="Clear Console's Content"
                                 FontFamily="Tele-Marines"
-                                Foreground="#FF075100"
+                                Background="LimeGreen"
+                                Command="{Binding ClearCommand}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                             <Image Source="/USBTerminal.Core;component/Resources/clean_brush-512.png" Width="17"></Image>
                         </Button>
@@ -39,7 +51,7 @@
                                 ToolTip="Save Console's Content"
                                 Command="{Binding SaveCommand}"
                                 FontFamily="Tele-Marines"
-                                Foreground="#FF075100"
+                                Background="LimeGreen"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                             <Image Source="/USBTerminal.Core;component/Resources/save_as.png" Width="17"></Image>
                         </Button>

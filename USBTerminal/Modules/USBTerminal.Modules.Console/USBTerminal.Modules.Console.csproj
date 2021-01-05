@@ -1,9 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>USBTerminal.Modules.Console</AssemblyName>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="ViewModels\TextBoxSinkViewModel.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.4.3" />
     <PackageReference Include="MvvmDialogs" Version="8.0.0" />

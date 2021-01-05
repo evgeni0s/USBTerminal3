@@ -12,6 +12,7 @@
 
                 <ResourceDictionary Source="pack://application:,,,/USBTerminal.Core;component/Resources/Icons.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/USBTerminal.Core;component/Resources/Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/USBTerminal.Core;component/Resources/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/USBTerminal.Core;component/Resources/CommonStyles.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/USBTerminal.Core;component/Resources/ImageResources.xaml"/>
 

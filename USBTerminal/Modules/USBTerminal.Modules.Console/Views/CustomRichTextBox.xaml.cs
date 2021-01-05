@@ -1,6 +1,8 @@
-﻿using Serilog;
+﻿using Prism.Commands;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,8 @@ namespace USBTerminal.Modules.Console.Views
     {
         private List<Key> keysRequireFix = new List<Key>() { Key.Space, Key.Enter, Key.Back, Key.Delete, Key.Up, Key.Down };
         private Run _focusedInline;
+        private bool isEnabledCustom = true;
+
         public CustomRichTextBox()
         {
             InitializeComponent();
@@ -30,7 +34,7 @@ namespace USBTerminal.Modules.Console.Views
 
 
         #region processing key inputs
-        private void screwManualTextInput()
+        private void subscribeEditableElement()
         {
             // this is where we handle the space and other keys wpf f*s up.
             System.Windows.Input.InputManager.Current.PreNotifyInput +=
@@ -39,7 +43,13 @@ namespace USBTerminal.Modules.Console.Views
             TextCompositionManager.AddPreviewTextInputStartHandler(
                 this,
                 PreviewTextInputHandler);                                          ///OnPreviewKeyDown
+
+            //SelectionChanged += (sender, e) => MoveCustomCaret();
+            //LostFocus += (sender, e) => Caret.Visibility = Visibility.Collapsed;
+            //GotFocus += (sender, e) => Caret.Visibility = Visibility.Visible;
         }
+
+        //private void unSubscribeEditableElement() unsubscribe already tried. Probably need to solve other way
 
         private void PreNotifyInput(object sender, NotifyInputEventArgs e)
         {
@@ -252,7 +262,7 @@ namespace USBTerminal.Modules.Console.Views
             return runs.ElementAt(previousIndex);
         }
 
-
+        
         #endregion
 
         #region other tools
@@ -275,27 +285,40 @@ namespace USBTerminal.Modules.Console.Views
         }
         #endregion
 
-        #region Commands
-        private ICommand _clearCommand;
-        public ICommand ClearCommand
-        {
-            get { return _clearCommand; }//?? (_clearCommand = new RelayCommand(OnClear)); }
-        }
 
-        private void OnClear(object obj)
+        public bool IsEnabledCustom
         {
-            readOnlyItems.Dispatcher.BeginInvoke(new Action(() =>
+            get => isEnabledCustom;
+            set
             {
-                readOnlyItems.Inlines.Clear();
-            }));
+                isEnabledCustom = value;
+                UpdateIsEnabled();
+            }
         }
-
-        #endregion
 
         private void onLoaded(object sender, RoutedEventArgs e)
         {
+            UpdateIsEnabled();
+        }
 
-            screwManualTextInput();
+        private void UpdateIsEnabled()
+        {
+            if (!IsLoaded)
+                return;
+
+
+            if (IsEnabledCustom)
+            {
+                subscribeEditableElement();
+                Focus();
+            }
+            else
+            {
+                // delete editable element
+                inputFieldParent.Inlines.Clear();
+                CaretBrush = Brushes.Transparent;
+                //CaretPosition = inputField.ContentEnd; ToDo: carret is not on propper place at start
+            }
         }
 
         private void onPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -313,10 +336,15 @@ namespace USBTerminal.Modules.Console.Views
             }
         }
 
-        //when mouse enters
-        private void onSetKeyboardFocus(object sender, MouseEventArgs e)
+        public void Clear()
         {
-            Focus();
+            readOnlyItems.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                readOnlyItems.Inlines.Clear();
+                inputField.Text = "";
+                _focusedInline = null;
+                Focus();
+            }));
         }
 
         public string GetText()
@@ -333,10 +361,36 @@ namespace USBTerminal.Modules.Console.Views
             return textRange.Text;
         }
 
-        protected void Unfocus()
+        public void SetText(string message, CustomRun run)
         {
+            readOnlyItems.Dispatcher.BeginInvoke(new Action(() => SetTextInternal(message, run)));
+        }
+
+        private void SetTextInternal(string message, CustomRun run)
+        {
+            run.Text = message + Environment.NewLine;
+            readOnlyItems.Inlines.Add(run);
+            ScrollToEnd();
             _focusedInline = null;
         }
+
+
+
+        //private void MoveCustomCaret()
+        //{
+
+        //    var caretLocation = CaretPosition.GetCharacterRect(LogicalDirection.Backward).Location;
+
+        //    if (!double.IsInfinity(caretLocation.X))
+        //    {
+        //        Canvas.SetLeft(Caret, 0);
+        //    }
+
+        //    if (!double.IsInfinity(caretLocation.Y))
+        //    {
+        //        Canvas.SetTop(Caret, -10);
+        //    }
+        //}
 
         /// <param name="category">Info - message from device only, Debug - messages from my app like "Successfull"</param>
         //public void Log(string message, Category category, Priority priority)

@@ -1,12 +1,11 @@
-﻿using Serilog;
+﻿using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace USBTerminal.Core.Interfaces.Console
 {
-    public interface ITextBoxLogger: ILogger
+    public interface ITextBoxSink: ILogEventSink
     {
-        public string GetText();
     }
 }

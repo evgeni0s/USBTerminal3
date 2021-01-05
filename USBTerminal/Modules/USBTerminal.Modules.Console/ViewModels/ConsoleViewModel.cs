@@ -1,4 +1,4 @@
-﻿using Prism.Mvvm;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,27 +17,65 @@ using IOPath = System.IO.Path;
 using System.Reflection;
 using USBTerminal.Core.Interfaces.Console;
 using Serilog;
+using Serilog.Events;
+using USBTerminal.Core.Interfaces;
 
 namespace USBTerminal.Modules.Console.ViewModels
 {
     public class ConsoleViewModel: RegionViewModelBase
     {
+        private readonly ILogger logger;
         private readonly IDialogService dialogService;
         private DelegateCommand saveCommand;
+        private DelegateCommand clearCommand;
+        private string title;
+        private IApplicationCommands applicationCommands;
+
         public ConsoleViewModel(IRegionManager regionManager, 
             ILogger logger, 
             IDialogService dialogService,
-            ITextBoxLogger textBoxLogger)
+            IApplicationCommands applicationCommands)
             : base(regionManager, logger)
         {
+            this.logger = logger;
             this.dialogService = dialogService;
-            TextBoxLogger = textBoxLogger;
+            this.applicationCommands = applicationCommands;
+            CustomRichTextBox = new CustomRichTextBox();
         }
 
-        public ITextBoxLogger TextBoxLogger { get; }
+        #region Commands
+        private DelegateCommand<LogEvent> loggingCommand;
+
+        public DelegateCommand<LogEvent> LoggingCommand
+        {
+            get { return loggingCommand ?? (loggingCommand = new DelegateCommand<LogEvent>(ExecuteLoggingCommand)); }
+        }
+
+        private void ExecuteLoggingCommand(LogEvent logEvent)
+        {
+            CustomRichTextBox.SetText(logEvent.RenderMessage(), LevelToCustomRun(logEvent.Level));
+        }
+        #endregion
+
+        public CustomRichTextBox CustomRichTextBox { get;  }
+
+        public string Title
+        {
+            get { return title; }
+            set { SetProperty(ref title, value); }
+        }
 
         public DelegateCommand SaveCommand =>
             saveCommand ?? (saveCommand = new DelegateCommand(ExecuteSaveCommand));
+
+        public DelegateCommand ClearCommand =>
+            clearCommand ?? (clearCommand = new DelegateCommand(ExecuteClearCommand));
+
+        private void ExecuteClearCommand()
+        {
+            CustomRichTextBox.Clear();
+            logger.Information($"Cleared text for '{Title}'");
+        }
 
         private void ExecuteSaveCommand()
         {
@@ -54,7 +92,7 @@ namespace USBTerminal.Modules.Console.ViewModels
             {
                 try
                 {
-                    File.WriteAllText(settings.FileName, TextBoxLogger.GetText());
+                    File.WriteAllText(settings.FileName, CustomRichTextBox.GetText());
                     Logger.Information("Content from console saved in file.");
                     Process.Start(new ProcessStartInfo(settings.FileName) { UseShellExecute = true });
                 }
@@ -62,6 +100,35 @@ namespace USBTerminal.Modules.Console.ViewModels
                 {
                     Logger.Error(e, "Error saveing console's content");
                 }
+            }
+        }
+
+        public override void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            Title = navigationContext.Parameters.GetValue<string>(nameof(Title));
+            if (Title == "Application Logs")
+            {
+                applicationCommands.LoggingCommand.RegisterCommand(LoggingCommand);
+                CustomRichTextBox.IsEnabledCustom = false;
+            }
+        }
+
+        static CustomRun LevelToCustomRun(LogEventLevel logEvent)
+        {
+            switch (logEvent)
+            {
+                case LogEventLevel.Debug:
+                    return CustomRun.Debug;
+                case LogEventLevel.Error:
+                    return CustomRun.Error;
+                case LogEventLevel.Fatal:
+                    return CustomRun.Error;
+                case LogEventLevel.Verbose:
+                case LogEventLevel.Warning:
+                case LogEventLevel.Information:
+                    return CustomRun.Info;
+                default:
+                    throw new NotImplementedException();
             }
         }
     }
