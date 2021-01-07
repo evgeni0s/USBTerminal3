@@ -1,5 +1,7 @@
 ﻿using Prism.Mvvm;
 using Prism.Navigation;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace USBTerminal.Core.Mvvm
 {

@@ -1,0 +1,151 @@
+﻿<UserControl x:Class="USBTerminal.Modules.USB.Views.USBPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:USBTerminal.Modules.USB.Views"
+             xmlns:ports="clr-namespace:System.IO.Ports;assembly=System"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="parities"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="ports:Parity" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="stopBits"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="ports:StopBits" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="dataMode"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:DataMode" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <sys:Double x:Key="PART_COMBOBOX_ITEM_WIDTH">80</sys:Double>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <SolidColorBrush Opacity="0.5" Color="#008C00" />
+        </Grid.Background>
+        <Button Width="20"
+                Height="20"
+                MinWidth="0"
+                MinHeight="0"
+                Margin="8"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Canvas.ZIndex="1"
+                Command="{Binding RefreshCommand}"
+                Style="{StaticResource RefreshButtonStyle}" />
+        <ListView VerticalAlignment="Top" ItemsSource="{Binding AvailablePorts}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding PortName}" Header="Port Name" />
+                    <GridViewColumn Header="Baud Rate">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox IsEnabled="{Binding CustomSerialPortIsOpened, Converter={StaticResource InvertedBoolConverter}}" SelectedItem="{Binding BaudRate}">
+                                    <!--  SelectedIndex="4"  -->
+                                    <!--  Default values do not fit because view is Recreated and VM remains  -->
+                                    <sys:Int32>1200</sys:Int32>
+                                    <sys:Int32>2400</sys:Int32>
+                                    <sys:Int32>4800</sys:Int32>
+                                    <sys:Int32>9600</sys:Int32>
+                                    <sys:Int32>19200</sys:Int32>
+                                    <sys:Int32>38400</sys:Int32>
+                                    <sys:Int32>57600</sys:Int32>
+                                    <sys:Int32>115200</sys:Int32>
+                                </ComboBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Parity">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox IsEnabled="{Binding CustomSerialPortIsOpened,
+                                                              Converter={StaticResource InvertedBoolConverter}}"
+                                          ItemsSource="{Binding Source={StaticResource parities}}"
+                                          SelectedItem="{Binding Parity}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Data Bits">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox IsEnabled="{Binding CustomSerialPortIsOpened, Converter={StaticResource InvertedBoolConverter}}" SelectedItem="{Binding DataBits}">
+                                    <sys:Int32>7</sys:Int32>
+                                    <sys:Int32>8</sys:Int32>
+                                    <sys:Int32>9</sys:Int32>
+                                </ComboBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Stop Bits">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox IsEnabled="{Binding CustomSerialPortIsOpened,
+                                                              Converter={StaticResource InvertedBoolConverter}}"
+                                          ItemsSource="{Binding Source={StaticResource stopBits}}"
+                                          SelectedItem="{Binding StopBits}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Data Mode">
+                        <!--  IsBinaryMode  -->
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding Source={StaticResource dataMode}}" SelectedItem="{Binding DataMode}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Connect">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ToggleButton Grid.Row="1"
+                                              Width="90"
+                                              Height="25"
+                                              VerticalAlignment="Center"
+                                              Command="{Binding OpenClosePortCommand}"
+                                              IsChecked="{Binding CustomSerialPortIsOpened,
+                                                                  Mode=OneWay}"
+                                              Style="{StaticResource ConnectButtonStyle}">
+                                    <Label FontSize="12"
+                                           FontStyle="Oblique"
+                                           FontWeight="Bold"
+                                           Foreground="White">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Setter Property="Content" Value="Connect" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CustomSerialPortIsOpened, Mode=OneWay}" Value="True">
+                                                        <Setter Property="Foreground" Value="Black" />
+                                                        <Setter Property="Content" Value="Disconnect" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                </GridView>
+            </ListView.View>
+
+        </ListView>
+    </Grid>
+</UserControl>

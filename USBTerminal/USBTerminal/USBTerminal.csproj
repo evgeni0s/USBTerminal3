@@ -13,10 +13,11 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\USBTerminal.Services.Interfaces\USBTerminal.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\USBTerminal.Services\USBTerminal.Services.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Core\USBTerminal.Core.csproj" />
+    <ProjectReference Include="..\..\USBTerminal.Modules.USB\USBTerminal.Modules.USB.csproj" />
     <ProjectReference Include="..\Modules\USBTerminal.Modules.Console\USBTerminal.Modules.Console.csproj" />
     <ProjectReference Include="..\Modules\USBTerminal.Modules.ModuleName\USBTerminal.Modules.ModuleName.csproj" />
-    <ProjectReference Include="..\Services\USBTerminal.Services.Interfaces\USBTerminal.Services.Interfaces.csproj" />
-    <ProjectReference Include="..\Services\USBTerminal.Services\USBTerminal.Services.csproj" />
   </ItemGroup>
 </Project>

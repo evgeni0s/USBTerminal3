@@ -8,5 +8,6 @@ namespace USBTerminal.Core
         public const string BottomPanelRegion = "BottomPanelRegion";
         public const string LeftPanelRegion = "LeftPanelRegion";
         public const string RightPanelRegion = "RightPanelRegion";
+        public const string TopPanelRegion = "TopRegion";
     }
 }

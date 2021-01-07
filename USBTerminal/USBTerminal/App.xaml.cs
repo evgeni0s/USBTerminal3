@@ -9,6 +9,7 @@ using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Interfaces.Console;
 using USBTerminal.Modules.Console;
 using USBTerminal.Modules.ModuleName;
+using USBTerminal.Modules.USB;
 using USBTerminal.Services;
 using USBTerminal.Services.Interfaces;
 using USBTerminal.Views;
@@ -32,8 +33,7 @@ namespace USBTerminal
         {
             containerRegistry.RegisterSingleton<IMessageService, MessageService>();
             containerRegistry.RegisterSingleton<IDialogService, DialogService>();
-            //containerRegistry.RegisterSingleton<ITerminal, TerminalViewModel>();
-            //containerRegistry.RegisterSingleton<ITextBoxSink>(TextBoxSink);
+            containerRegistry.RegisterSingleton<IUSBService, USBService>();
 
             containerRegistry.RegisterSingleton<IApplicationCommands>(() => applicationCommands);
             //ILoggingFacade
@@ -47,6 +47,7 @@ namespace USBTerminal
         {
             moduleCatalog.AddModule<ModuleNameModule>();
             moduleCatalog.AddModule<ConsoleModule>();
+            moduleCatalog.AddModule<USBModule>();
         }
 
         protected override void OnStartup(StartupEventArgs e)
