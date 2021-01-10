@@ -1,10 +1,12 @@
-﻿using Prism.Commands;
+using Prism.Commands;
 using Serilog;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +17,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using USBTerminal.Core.Enums.Console;
+using USBTerminal.Core.Interfaces.Console;
 
 namespace USBTerminal.Modules.Console.Views
 {
@@ -26,10 +31,12 @@ namespace USBTerminal.Modules.Console.Views
         private List<Key> keysRequireFix = new List<Key>() { Key.Space, Key.Enter, Key.Back, Key.Delete, Key.Up, Key.Down };
         private Run _focusedInline;
         private bool isEnabledCustom = true;
+        private readonly IRunFactory runFactory;
 
-        public CustomRichTextBox()
+        public CustomRichTextBox(IRunFactory runFactory)
         {
             InitializeComponent();
+            this.runFactory = runFactory;
         }
 
 
@@ -292,16 +299,16 @@ namespace USBTerminal.Modules.Console.Views
             set
             {
                 isEnabledCustom = value;
-                UpdateIsEnabled();
+                OnIsEnabledChanged();
             }
         }
 
         private void onLoaded(object sender, RoutedEventArgs e)
         {
-            UpdateIsEnabled();
+            OnIsEnabledChanged();
         }
 
-        private void UpdateIsEnabled()
+        private void OnIsEnabledChanged()
         {
             if (!IsLoaded)
                 return;
@@ -360,21 +367,47 @@ namespace USBTerminal.Modules.Console.Views
             // representing the plain text content of the TextRange. 
             return textRange.Text;
         }
+        object lockObject = new object();
 
-        public void SetText(string message, CustomRun run)
+        public void SetText(string message, RunType runType)
         {
-            readOnlyItems.Dispatcher.BeginInvoke(new Action(() => SetTextInternal(message, run)));
+            readOnlyItems.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var run = runFactory.Get(runType) as Run;
+                run.Text = message + Environment.NewLine;
+                readOnlyItems.Inlines.Add(run);
+                ScrollToEnd();
+                _focusedInline = null;
+            }
+            ));
         }
 
-        private void SetTextInternal(string message, CustomRun run)
+        public static class ThreadContext
         {
-            run.Text = message + Environment.NewLine;
-            readOnlyItems.Inlines.Add(run);
-            ScrollToEnd();
-            _focusedInline = null;
+            public static void InvokeOnUiThread(Action action)
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    action();
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(action);
+                }
+            }
+
+            public static void BeginInvokeOnUiThread(Action action)
+            {
+                if (Application.Current.Dispatcher.CheckAccess())
+                {
+                    action();
+                }
+                else
+                {
+                    Application.Current.Dispatcher.BeginInvoke(action);
+                }
+            }
         }
-
-
 
         //private void MoveCustomCaret()
         //{

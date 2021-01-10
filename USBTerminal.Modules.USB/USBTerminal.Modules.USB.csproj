@@ -5,6 +5,13 @@
     <AssemblyName>USBTerminal.Modules.USB</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Views\USBPortView.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\USBPortView.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
   </ItemGroup>
   <ItemGroup>

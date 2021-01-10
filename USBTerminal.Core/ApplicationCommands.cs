@@ -1,4 +1,4 @@
-﻿using Prism.Commands;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,5 +11,6 @@ namespace USBTerminal.Core
     {
         public CompositeCommand TerminalCommand { get; } = new CompositeCommand();
         public CompositeCommand LoggingCommand { get; } = new CompositeCommand();
+        public CompositeCommand OpenPortCommand { get; } = new CompositeCommand();
     }
 }

@@ -13,6 +13,40 @@
              d:DesignHeight="300"
              d:DesignWidth="300"
              mc:Ignorable="d">
+    <RichTextBox.Resources>
+        <ResourceDictionary>
+            
+            <Style x:Key="RunStyle" TargetType="{x:Type Run}">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+            </Style>
+
+            <Style x:Key="{x:Type local:WhiteRun}" TargetType="{x:Type local:WhiteRun}" BasedOn="{StaticResource RunStyle}">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <Style x:Key="{x:Type local:BlueRun}" TargetType="{x:Type local:BlueRun}" BasedOn="{StaticResource RunStyle}">
+                <Setter Property="Foreground" Value="#70d4ff"/>
+            </Style>
+
+            <Style x:Key="{x:Type local:GreenRun}" TargetType="{x:Type local:GreenRun}" BasedOn="{StaticResource RunStyle}">
+                <Setter Property="Foreground" Value="LimeGreen"/>
+            </Style>
+
+            <Style x:Key="{x:Type local:YellowRun}" TargetType="{x:Type local:YellowRun}" BasedOn="{StaticResource RunStyle}">
+                <Setter Property="Foreground" Value="#fffb00"/>
+            </Style>
+
+            <Style x:Key="{x:Type local:OrangeRun}" TargetType="{x:Type local:OrangeRun}" BasedOn="{StaticResource RunStyle}">
+                <Setter Property="Foreground" Value="#ffbd14"/>
+            </Style>
+
+            <Style x:Key="{x:Type local:RedRun}" TargetType="{x:Type local:RedRun}" BasedOn="{StaticResource RunStyle}">
+                <Setter Property="Foreground" Value="#c21b1b"/>
+            </Style>
+
+        </ResourceDictionary>
+    </RichTextBox.Resources>
     <!--<RichTextBox.CaretBrush>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1" >
                 <LinearGradientBrush.GradientStops>
@@ -22,7 +56,13 @@
             </LinearGradientBrush>
     </RichTextBox.CaretBrush>-->
     <FlowDocument>
-        <Paragraph x:Name="readOnlyItems" />
+        <Paragraph x:Name="readOnlyItems" >
+            <local:CustomRun FontSize="13"
+                                 FontWeight="Bold"
+                                 Foreground="LimeGreen"
+                             Text="readonly text">
+            </local:CustomRun>
+        </Paragraph>
         <Paragraph MinWidowLines="15" x:Name="inputFieldParent">
             <local:CustomRun x:Name="inputField"
                                  FontSize="13"
@@ -35,5 +75,5 @@
             </Canvas>-->
         </Paragraph>
     </FlowDocument>
-
+<!--CONTINUE FROM WRITING STYLES FOR RUN-->
 </RichTextBox>

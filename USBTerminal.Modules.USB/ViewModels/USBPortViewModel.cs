@@ -1,42 +1,72 @@
-﻿using Prism.Commands;
+using AutoMapper;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
+using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Modules.USB.ViewModels
 {
     public class USBPortViewModel : ViewModelBase
     {
-        private string _name;
-        private string _boudRate;
+        private readonly IUSBService usbService;
+        public IApplicationCommands applicationCommands;
+        private IMapper mapper;
+        private DelegateCommand openPortCommand;
+        private string _portName;
+        private int _baudRate;
         private string _parity;
-        private string _dataBits;
-        private string _stopBits;
+        private int _dataBits;
+        private double _stopBits;
         private string _dataMode;
+        private bool _isOpen;
 
-        public USBPortViewModel()
+        public USBPortViewModel(IUSBService usbService,
+            IMapper mapper,
+            IApplicationCommands applicationCommands)
         {
+            this.usbService = usbService;
+            this.applicationCommands = applicationCommands;
+            this.mapper = mapper;
+            BaudRatesList = usbService.GetBauds();
+            DataBitsList = usbService.GetDataBits();
+            StopBitsList = usbService.GetStopBits();
+            DataModeList = usbService.GetDataModes();
+            ParitiesList = usbService.GetParities();
         }
 
-        public string Name
+        public DelegateCommand OpenPortCommand
         {
-            get => _name;
+            get { return openPortCommand ?? (openPortCommand = new DelegateCommand(ExecuteOpenPortCommand)); }
+        }
+
+        private void ExecuteOpenPortCommand()
+        {
+            var dto = mapper.Map<SerialPortModel>(this);
+            applicationCommands.OpenPortCommand.Execute(dto);
+        }
+
+        public string PortName
+        {
+            get => _portName;
             set
             {
-                SetProperty(ref _name, value);
+                SetProperty(ref _portName, value);
             }
         }
 
-        public string BoudRate
+        public int BaudRate
         {
-            get => _boudRate;
+            get => _baudRate;
             set
             {
-                SetProperty(ref _boudRate, value);
+                SetProperty(ref _baudRate, value);
             }
         }
 
@@ -49,7 +79,7 @@ namespace USBTerminal.Modules.USB.ViewModels
             }
         }
 
-        public string DataBits
+        public int DataBits
         {
             get => _dataBits;
             set
@@ -58,7 +88,7 @@ namespace USBTerminal.Modules.USB.ViewModels
             }
         }
 
-        public string StopBits
+        public double StopBits
         {
             get => _stopBits;
             set
@@ -75,5 +105,21 @@ namespace USBTerminal.Modules.USB.ViewModels
             }
         }
 
+        public bool IsOpen
+        {
+            get { return _isOpen; }
+            set 
+            { 
+                _isOpen = value;
+                SetProperty(ref _isOpen, value);
+            }
+        }
+
+
+        public IEnumerable<int> BaudRatesList { get; }
+        public IEnumerable<double> StopBitsList { get; }
+        public IEnumerable<int> DataBitsList { get; }
+        public IEnumerable<string> DataModeList { get; }
+        public IEnumerable<string> ParitiesList { get; }
     }
 }

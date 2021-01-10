@@ -1,5 +1,7 @@
-﻿using Prism.Commands;
+﻿using AutoMapper;
+using Prism.Commands;
 using Prism.Events;
+using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using Serilog;
@@ -12,6 +14,7 @@ using System.Threading.Tasks;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Interfaces.Events;
 using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Modules.USB.ViewModels
@@ -23,23 +26,39 @@ namespace USBTerminal.Modules.USB.ViewModels
         private readonly IApplicationCommands applicationCommands;
         private readonly IUSBService usbService;
         private readonly IEventAggregator eventAggregator;
-        private ObservableCollection<SerialPortModel> _availablePorts;
+        private readonly IMapper mapper;
+        private readonly IContainerProvider container;
+        private ObservableCollection<USBPortViewModel> _availablePorts;
 
         public USBPanelViewModel(IRegionManager regionManager,
             ILogger logger,
             IApplicationCommands applicationCommands,
+            IEventAggregator eventAggregator,
             IUSBService usbService,
-            IEventAggregator eventAggregator)
+            IMapper mapper,
+            IContainerProvider container)
             : base(regionManager, logger)
         {
             this.logger = logger;
             this.applicationCommands = applicationCommands;
             this.usbService = usbService;
             this.eventAggregator = eventAggregator;
-            AvailablePorts = new ObservableCollection<SerialPortModel>(this.usbService.GetAll());
+            this.container = container;
+            this.mapper = mapper;
+            var portViewModels = this.usbService.GetAll().Select(CreatePortViewModel);
+            logger.Information($"Found {portViewModels.Count()} ports.");
+            foreach (var port in portViewModels)
+            {
+                logger.Information($"{port.PortName}");
+            }
+            AvailablePorts = new ObservableCollection<USBPortViewModel>(portViewModels);
+            eventAggregator.GetEvent<PortAddedEvent>().Subscribe(AddPort);
+            eventAggregator.GetEvent<PortRemovedEvent>().Subscribe(RemovePort);
+            eventAggregator.GetEvent<PortOpenedEvent>().Subscribe(OnPortOpened);
+            eventAggregator.GetEvent<PortClosedEvent>().Subscribe(OnPortClosed);
         }
 
-        public ObservableCollection<SerialPortModel> AvailablePorts
+        public ObservableCollection<USBPortViewModel> AvailablePorts
         {
             get { return _availablePorts; }
             set
@@ -47,6 +66,48 @@ namespace USBTerminal.Modules.USB.ViewModels
                 SetProperty(ref _availablePorts, value);
             }
         }
+        private void OnPortClosed(SerialPortModel port)
+        {
+            this.logger.Information($"Closed port: {port.PortName}");
+            GetViewModel(port).IsOpen = port.IsOpen;
+        }
 
+        private void OnPortOpened(SerialPortModel port)
+        {
+            this.logger.Information($"Opened port: {port.PortName}");
+            GetViewModel(port).IsOpen = port.IsOpen;
+        }
+
+        private void RemovePort(SerialPortModel port)
+        {
+            this.logger.Information($"Removed port: {port.PortName}");
+            var vmToRemove = AvailablePorts.FirstOrDefault(p => p.PortName == port.PortName);
+            AvailablePorts.Remove(vmToRemove);
+        }
+
+        private void AddPort(SerialPortModel port)
+        {
+            //this.logger.Information($"Added port: {port.PortName}");
+            AvailablePorts.Add(CreatePortViewModel(port));
+        }
+
+        private USBPortViewModel CreatePortViewModel(SerialPortModel port)
+        {
+            var viewModel = container.Resolve<USBPortViewModel>();
+
+            // Copy fields from service
+            mapper.Map(port, viewModel);
+
+            // DataMode is a local field. Service knows nothing about it. 
+            // Need to set default value
+            viewModel.DataMode = "Text";
+
+            return viewModel;
+        }
+
+        private USBPortViewModel GetViewModel(SerialPortModel port)
+        {
+            return AvailablePorts.FirstOrDefault(p => p.PortName == port.PortName);
+        }
     }
 }

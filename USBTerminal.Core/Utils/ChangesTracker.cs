@@ -15,21 +15,31 @@ namespace USBTerminal.Core.Utils
         {
             this.oldValues = oldValues;
             this.newValues = newValues;
+            this.areEqual = areEqual;
+            Refresh();
         }
 
-        public IEnumerable<T2> AddedItems
+        public void Refresh()
         {
-            get => newValues.Where(n => oldValues.All(o => !areEqual(o, n)));
+            AddedItems = newValues.Where(n => oldValues.All(o => !areEqual(o, n))).ToList();
+            RemovedItems = oldValues.Where(n => newValues.All(o => !areEqual(n, o))).ToList();
+            UpdatedItems = oldValues.Where(n => newValues.Any(o => areEqual(n, o))).ToList();
         }
 
-        public IEnumerable<T1> RemovedItems
+        public IEnumerable<T2> AddedItems { get; set; }
+
+        public IEnumerable<T1> RemovedItems { get; set; }
+
+        public IEnumerable<T1> UpdatedItems { get; set; }
+
+        public T1 Match(T2 newValue)
         {
-            get => oldValues.Where(n => newValues.All(o => !areEqual(n, o)));
+            return oldValues.FirstOrDefault(o => areEqual(o, newValue));
         }
 
-        public IEnumerable<T1> UpdatedItems
+        public T2 Match(T1 oldValue)
         {
-            get => oldValues.Where(n => newValues.Any(o => areEqual(n, o)));
+            return newValues.FirstOrDefault(n => areEqual(oldValue, n));
         }
     }
 }

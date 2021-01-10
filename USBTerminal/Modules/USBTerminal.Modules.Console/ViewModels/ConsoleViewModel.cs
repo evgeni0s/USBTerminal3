@@ -19,6 +19,7 @@ using USBTerminal.Core.Interfaces.Console;
 using Serilog;
 using Serilog.Events;
 using USBTerminal.Core.Interfaces;
+using USBTerminal.Core.Enums.Console;
 
 namespace USBTerminal.Modules.Console.ViewModels
 {
@@ -34,13 +35,14 @@ namespace USBTerminal.Modules.Console.ViewModels
         public ConsoleViewModel(IRegionManager regionManager, 
             ILogger logger, 
             IDialogService dialogService,
-            IApplicationCommands applicationCommands)
+            IApplicationCommands applicationCommands,
+            IRunFactory runFactory)
             : base(regionManager, logger)
         {
             this.logger = logger;
             this.dialogService = dialogService;
             this.applicationCommands = applicationCommands;
-            CustomRichTextBox = new CustomRichTextBox();
+            CustomRichTextBox = new CustomRichTextBox(runFactory);
         }
 
         #region Commands
@@ -53,7 +55,7 @@ namespace USBTerminal.Modules.Console.ViewModels
 
         private void ExecuteLoggingCommand(LogEvent logEvent)
         {
-            CustomRichTextBox.SetText(logEvent.RenderMessage(), LevelToCustomRun(logEvent.Level));
+            CustomRichTextBox.SetText(logEvent.RenderMessage(), LevelToRunType(logEvent.Level));
         }
         #endregion
 
@@ -113,20 +115,21 @@ namespace USBTerminal.Modules.Console.ViewModels
             }
         }
 
-        static CustomRun LevelToCustomRun(LogEventLevel logEvent)
+        public RunType LevelToRunType(LogEventLevel logEvent)
         {
             switch (logEvent)
             {
                 case LogEventLevel.Debug:
-                    return CustomRun.Debug;
-                case LogEventLevel.Error:
-                    return CustomRun.Error;
-                case LogEventLevel.Fatal:
-                    return CustomRun.Error;
-                case LogEventLevel.Verbose:
-                case LogEventLevel.Warning:
+                    return RunType.White;
                 case LogEventLevel.Information:
-                    return CustomRun.Info;
+                    return RunType.Green;
+                case LogEventLevel.Verbose:
+                    return RunType.Blue;
+                case LogEventLevel.Error:
+                case LogEventLevel.Fatal:
+                    return RunType.Red;
+                case LogEventLevel.Warning:
+                    return RunType.Orange;
                 default:
                     throw new NotImplementedException();
             }

@@ -1,4 +1,5 @@
-﻿using ControlzEx.Theming;
+﻿using AutoMapper;
+using ControlzEx.Theming;
 using MvvmDialogs;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -10,8 +11,10 @@ using USBTerminal.Core.Interfaces.Console;
 using USBTerminal.Modules.Console;
 using USBTerminal.Modules.ModuleName;
 using USBTerminal.Modules.USB;
+using USBTerminal.Modules.USB.ViewModels;
 using USBTerminal.Services;
 using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Profiles;
 using USBTerminal.Views;
 using ApplicationCommands = USBTerminal.Core.ApplicationCommands;
 
@@ -34,6 +37,22 @@ namespace USBTerminal
             containerRegistry.RegisterSingleton<IMessageService, MessageService>();
             containerRegistry.RegisterSingleton<IDialogService, DialogService>();
             containerRegistry.RegisterSingleton<IUSBService, USBService>();
+
+            containerRegistry.RegisterSingleton<IRunFactory, RunFactory>();
+            containerRegistry.Register<USBPortViewModel>();// childe vm
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                // Implement common mappings here. Ex. String to integet, string to boolean
+                // ...
+
+                // Profiles are for each module so that it could add extra mappings on top of common
+                cfg.AddProfile<USBServiceProfile>();
+                cfg.AddProfile<USBModuleProfile>();
+            });
+
+            containerRegistry.RegisterSingleton<IConfigurationProvider>(() => config);
+            containerRegistry.RegisterScoped<IMapper, Mapper>();
 
             containerRegistry.RegisterSingleton<IApplicationCommands>(() => applicationCommands);
             //ILoggingFacade
