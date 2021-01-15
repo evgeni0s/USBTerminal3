@@ -6,7 +6,7 @@ using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Services.Interfaces.Events
 {
-    public class PortRemovedEvent : PubSubEvent<string>
+    public class UsbMessageReceivedEvent : PubSubEvent<SerialPortMessage>
     {
     }
 }

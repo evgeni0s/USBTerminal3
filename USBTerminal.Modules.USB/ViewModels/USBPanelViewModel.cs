@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
@@ -19,6 +19,7 @@ using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Modules.USB.ViewModels
 {
+    // ToDo: write tests
     public class USBPanelViewModel : RegionViewModelBase
     {
         private readonly ILogger logger;

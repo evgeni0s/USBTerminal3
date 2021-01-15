@@ -20,6 +20,10 @@ using Serilog;
 using Serilog.Events;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Enums.Console;
+using Prism.Ioc;
+using Prism.Events;
+using USBTerminal.Services.Interfaces.Events;
+using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Modules.Console.ViewModels
 {
@@ -27,22 +31,25 @@ namespace USBTerminal.Modules.Console.ViewModels
     {
         private readonly ILogger logger;
         private readonly IDialogService dialogService;
+        private readonly IApplicationCommands applicationCommands;
+        private readonly IEventAggregator eventAggregator;
         private DelegateCommand saveCommand;
         private DelegateCommand clearCommand;
         private string title;
-        private IApplicationCommands applicationCommands;
 
         public ConsoleViewModel(IRegionManager regionManager, 
             ILogger logger, 
             IDialogService dialogService,
             IApplicationCommands applicationCommands,
-            IRunFactory runFactory)
+            IContainerProvider container,
+            IEventAggregator eventAggregator)
             : base(regionManager, logger)
         {
             this.logger = logger;
             this.dialogService = dialogService;
             this.applicationCommands = applicationCommands;
-            CustomRichTextBox = new CustomRichTextBox(runFactory);
+            this.eventAggregator = eventAggregator;
+            CustomRichTextBox = container.Resolve<CustomRichTextBox>();
         }
 
         #region Commands
@@ -110,9 +117,28 @@ namespace USBTerminal.Modules.Console.ViewModels
             Title = navigationContext.Parameters.GetValue<string>(nameof(Title));
             if (Title == "Application Logs")
             {
+                // Readonly. No command sending
                 applicationCommands.LoggingCommand.RegisterCommand(LoggingCommand);
                 CustomRichTextBox.IsEnabledCustom = false;
             }
+            else
+            {
+                // Terminal window
+                // Send recieve messages from usb
+                eventAggregator.GetEvent<TerminalInputEvent>().Subscribe(OnUserEnteredText);
+                eventAggregator.GetEvent<UsbMessageReceivedEvent>().Subscribe(OnReceivedResponseFromUsbDecive);
+            }
+        }
+
+        private void OnReceivedResponseFromUsbDecive(SerialPortMessage response)
+        {
+            CustomRichTextBox.SetText(response.TextData, RunType.Blue);
+        }
+
+        private void OnUserEnteredText(string userInput)
+        {
+            var message = new SerialPortMessage { TextData = userInput };
+            applicationCommands.SendMessageToPortCommand.Execute(message);
         }
 
         public RunType LevelToRunType(LogEventLevel logEvent)

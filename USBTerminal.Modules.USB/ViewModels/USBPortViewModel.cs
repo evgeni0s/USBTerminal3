@@ -19,12 +19,14 @@ namespace USBTerminal.Modules.USB.ViewModels
         public IApplicationCommands applicationCommands;
         private IMapper mapper;
         private DelegateCommand openPortCommand;
+        private DelegateCommand closePortCommand;
         private string _portName;
+        private string _portState;
         private int _baudRate;
         private string _parity;
         private int _dataBits;
         private double _stopBits;
-        private string _dataMode;
+        private string _dataMode = "Default";
         private bool _isOpen;
 
         public USBPortViewModel(IUSBService usbService,
@@ -48,8 +50,23 @@ namespace USBTerminal.Modules.USB.ViewModels
 
         private void ExecuteOpenPortCommand()
         {
+            PortState = "Waiting";
+            RaisePropertyChanged(nameof(PortState));
             var dto = mapper.Map<SerialPortModel>(this);
             applicationCommands.OpenPortCommand.Execute(dto);
+        }
+
+        public DelegateCommand ClosePortCommand
+        {
+            get { return closePortCommand ?? (closePortCommand = new DelegateCommand(ExecuteClosePortCommand)); }
+        }
+
+        private void ExecuteClosePortCommand()
+        {
+            PortState = "Waiting";
+            RaisePropertyChanged(nameof(PortState));
+            var dto = mapper.Map<SerialPortModel>(this);
+            applicationCommands.ClosePortCommand.Execute(dto);
         }
 
         public string PortName
@@ -111,10 +128,21 @@ namespace USBTerminal.Modules.USB.ViewModels
             set 
             { 
                 _isOpen = value;
+                PortState = value ? "Pressed" : "Default";
+                RaisePropertyChanged(nameof(PortState)); // For some reaason SetProperty does not update GUI
                 SetProperty(ref _isOpen, value);
             }
         }
 
+        public string PortState
+        {
+            get { return _portState; }
+            set 
+            { 
+                _portState = value;
+                SetProperty(ref _portState, value);
+            }
+        }
 
         public IEnumerable<int> BaudRatesList { get; }
         public IEnumerable<double> StopBitsList { get; }

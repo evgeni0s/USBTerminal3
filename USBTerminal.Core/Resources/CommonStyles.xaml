@@ -12,6 +12,7 @@
 
 
     <utils:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+    <utils:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter"/>
 
     <DataTemplate x:Key="legendTemplate" >
         <Grid HorizontalAlignment="Stretch">
@@ -105,6 +106,12 @@
         <GradientStop Color="Black"/>
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="ConnectButton_Waiting_Brush" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+        <GradientStop Color="#f5d64c"/>
+        <GradientStop Color="#fff3bd" Offset="0.749"/>
+        <GradientStop Color="Black" Offset="1"/>
+    </LinearGradientBrush>
+
     <Style x:Key="ConnectButtonStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
@@ -150,7 +157,45 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="DefaultButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent">
+                        <Path x:Name="PART_PATH" Data="M96,180 C183.0265,178.36055 242.20029,172.28545 233,207 C74.999939,225.00015 96,180 96,180 z" Stretch="Fill" UseLayoutRounding="False" Fill="{StaticResource ConnectButton_Normal_Brush}"/>
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+    <Style x:Key="WaitingButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent">
+                        <Path x:Name="PART_PATH" Data="M96,180 C183.0265,178.36055 242.20029,172.28545 233,207 C74.999939,225.00015 96,180 96,180 z" Stretch="Fill" UseLayoutRounding="False" Fill="{StaticResource ConnectButton_Waiting_Brush}"/>
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PressedButtonStyle" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent">
+                        <Path x:Name="PART_PATH" Data="M96,180 C183.0265,178.36055 242.20029,172.28545 233,207 C74.999939,225.00015 96,180 96,180 z" Stretch="Fill" UseLayoutRounding="False" Fill="{StaticResource ConnectButton_PressedChecked_Brush}"/>
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <!--DO NOT DELETE THIS! It is my own steam punk button style. With metal plate. I just do not need it in METRO app-->
     <Style x:Key="FlatButtonStyle_NOT_USED" TargetType="Button">
         <Setter Property="Template">

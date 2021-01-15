@@ -12,5 +12,7 @@ namespace USBTerminal.Core
         public CompositeCommand TerminalCommand { get; } = new CompositeCommand();
         public CompositeCommand LoggingCommand { get; } = new CompositeCommand();
         public CompositeCommand OpenPortCommand { get; } = new CompositeCommand();
+        public CompositeCommand ClosePortCommand { get; } = new CompositeCommand();
+        public CompositeCommand SendMessageToPortCommand { get; } = new CompositeCommand();
     }
 }

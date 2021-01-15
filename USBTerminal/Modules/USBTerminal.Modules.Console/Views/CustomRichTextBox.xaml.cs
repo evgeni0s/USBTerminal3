@@ -1,4 +1,5 @@
 using Prism.Commands;
+using Prism.Events;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -20,6 +21,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using USBTerminal.Core.Enums.Console;
 using USBTerminal.Core.Interfaces.Console;
+using USBTerminal.Services.Interfaces.Events;
 
 namespace USBTerminal.Modules.Console.Views
 {
@@ -32,11 +34,13 @@ namespace USBTerminal.Modules.Console.Views
         private Run _focusedInline;
         private bool isEnabledCustom = true;
         private readonly IRunFactory runFactory;
+        private readonly IEventAggregator eventAggregator;
 
-        public CustomRichTextBox(IRunFactory runFactory)
+        public CustomRichTextBox(IRunFactory runFactory, IEventAggregator eventAggregator)
         {
             InitializeComponent();
             this.runFactory = runFactory;
+            this.eventAggregator = eventAggregator;
         }
 
 
@@ -122,9 +126,9 @@ namespace USBTerminal.Modules.Console.Views
                     {
                         Run run = CustomRun.Cmd;
                         run.Text = inputField.Text;
-                        readOnlyItems.Inlines.Add(new Run(Environment.NewLine));//problems with extra lines
                         readOnlyItems.Inlines.Add(run);
-                        TryExecute(inputField.Text);//runs command if nessesary
+                        readOnlyItems.Inlines.Add(new Run(Environment.NewLine));//problems with extra lines
+                        eventAggregator.GetEvent<TerminalInputEvent>().Publish(inputField.Text);//runs command 
                         inputField.Text = "";
                         ScrollToEnd();
                         _focusedInline = null;
@@ -272,27 +276,6 @@ namespace USBTerminal.Modules.Console.Views
         
         #endregion
 
-        #region other tools
-        bool isBinary;
-        private void TryExecute(string cmd)
-        {
-            //var _settings = ServiceLocator.Current.GetInstance<ISettingsViewModel>();
-            //if (_settings.Ports == null || cmd == string.Empty) return;
-
-            //if (_settings.Ports.Count == 0)
-            //{
-            //    Log("No active ports. Go to settings and open at least 1 port", Category.Exception, Priority.Medium);
-            //}
-
-            //foreach (var port in _settings.Ports)
-            //{
-            //    port.SendData(cmd);
-            //}
-
-        }
-        #endregion
-
-
         public bool IsEnabledCustom
         {
             get => isEnabledCustom;
@@ -374,8 +357,9 @@ namespace USBTerminal.Modules.Console.Views
             readOnlyItems.Dispatcher.BeginInvoke(new Action(() =>
             {
                 var run = runFactory.Get(runType) as Run;
-                run.Text = message + Environment.NewLine;
+                run.Text = message; // + Environment.NewLine;
                 readOnlyItems.Inlines.Add(run);
+                readOnlyItems.Inlines.Add(new Run(Environment.NewLine));//problems with extra lines
                 ScrollToEnd();
                 _focusedInline = null;
             }

@@ -21,6 +21,8 @@ namespace USBTerminal.Services.Profiles
 
             CreateMap<SerialPort, SerialPortModel>();
             CreateMap<SerialPortModel, SerialPort>();
+
+            CreateMap<SerialPortModel, SerialPortModel>(); // Clone
         }
 
         public Parity Convert(string source, Parity destination, ResolutionContext context)

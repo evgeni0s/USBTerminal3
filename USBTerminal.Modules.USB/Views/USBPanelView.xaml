@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:USBTerminal.Modules.USB.Views"
-             xmlns:ports="clr-namespace:System.IO.Ports;assembly=System"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -22,46 +21,48 @@
                 Canvas.ZIndex="1"
                 Command="{Binding RefreshCommand}"
                 Style="{StaticResource RefreshButtonStyle}" />
-        <ListView VerticalAlignment="Top" ItemsSource="{Binding AvailablePorts}">
+        <ListView VerticalAlignment="Top" ItemsSource="{Binding AvailablePorts}" 
+                  HorizontalAlignment="Stretch" 
+                  HorizontalContentAlignment="Stretch">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding PortName}" Header="Port Name" />
+                    <GridViewColumn Width="90" DisplayMemberBinding="{Binding PortName}" Header="Port Name" />
 
                     <GridViewColumn Header="Baud Rate">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox IsEnabled="{Binding IsOpened, Converter={StaticResource InvertedBoolConverter}}"
+                                <ComboBox IsEnabled="{Binding IsOpen, Converter={StaticResource InvertedBoolConverter}}"
                                           ItemsSource="{Binding BaudRatesList}"
                                           SelectedItem="{Binding BaudRate}">
                                 </ComboBox>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    
-                    <GridViewColumn Header="Parity">
+
+                    <GridViewColumn Width="80" Header="Parity">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox IsEnabled="{Binding IsOpened, Converter={StaticResource InvertedBoolConverter}}"
+                                <ComboBox IsEnabled="{Binding IsOpen, Converter={StaticResource InvertedBoolConverter}}"
                                           ItemsSource="{Binding ParitiesList}"
                                           SelectedItem="{Binding Parity}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    
-                    <GridViewColumn Header="Data Bits">
+
+                    <GridViewColumn Width="80" Header="Data Bits">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox IsEnabled="{Binding IsOpened, Converter={StaticResource InvertedBoolConverter}}" 
+                                <ComboBox IsEnabled="{Binding IsOpen, Converter={StaticResource InvertedBoolConverter}}" 
                                           ItemsSource="{Binding DataBitsList}"
                                           SelectedItem="{Binding DataBits}">
                                 </ComboBox>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Stop Bits">
+                    <GridViewColumn Width="80" Header="Stop Bits">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox IsEnabled="{Binding IsOpened, Converter={StaticResource InvertedBoolConverter}}"
+                                <ComboBox IsEnabled="{Binding IsOpen, Converter={StaticResource InvertedBoolConverter}}"
                                           ItemsSource="{Binding StopBitsList}"
                                           SelectedItem="{Binding StopBits}" />
                             </DataTemplate>
@@ -71,40 +72,64 @@
                         <!--  IsBinaryMode  -->
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ComboBox IsEnabled="{Binding IsOpened, Converter={StaticResource InvertedBoolConverter}}"
+                                <ComboBox IsEnabled="{Binding IsOpen, Converter={StaticResource InvertedBoolConverter}}"
                                           ItemsSource="{Binding DataModeList}" 
                                           SelectedItem="{Binding DataMode}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="Connect">
+                    <GridViewColumn Header="Connect" Width="140" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ToggleButton Grid.Row="1"
-                                              Width="90"
-                                              Height="25"
-                                              VerticalAlignment="Center"
-                                              Command="{Binding OpenPortCommand}"
-                                              IsChecked="{Binding IsOpened}"
-                                              Style="{StaticResource ConnectButtonStyle}">
-                                    <Label FontSize="12"
-                                           FontStyle="Oblique"
-                                           FontWeight="Bold"
-                                           Foreground="White">
-                                        <Label.Style>
-                                            <Style TargetType="Label">
-                                                <Setter Property="Content" Value="Connect" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsOpened, Mode=OneWay}" Value="True">
-                                                        <Setter Property="Foreground" Value="Black" />
-                                                        <Setter Property="Content" Value="Disconnect" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
+                                <Grid>
+                                    <Button Width="120"
+                                            Height="25"
+                                            VerticalAlignment="Center"
+                                            x:Name="OpenPortButton"
+                                            Visibility="{Binding PortState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Default}"
+                                            Command="{Binding OpenPortCommand}"
+                                            Style="{StaticResource DefaultButtonStyle}">
+                                        <Label FontSize="12"
+                                                FontStyle="Oblique"
+                                                FontWeight="Bold"
+                                                Foreground="White">
+                                            Open
+                                        </Label>
+                                    </Button>
+                                    
+                                    <Button Width="120"
+                                            Height="25"
+                                            VerticalAlignment="Center"
+                                            x:Name="WaitingStateButton"
+                                            Visibility="{Binding PortState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Waiting}"
+                                            Style="{StaticResource WaitingButtonStyle}">
+                                        <Label FontSize="12"
+                                               FontStyle="Oblique"
+                                               FontWeight="Bold"
+                                               Foreground="Black">
+                                            In Progress
+                                        </Label>
+                                    </Button>
+
+                                    <Button Width="120"
+                                            Height="25"
+                                            VerticalAlignment="Center"
+                                            x:Name="PressedStateButton"
+                                            Visibility="{Binding PortState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Pressed}"
+                                            Command="{Binding ClosePortCommand}"
+                                            Style="{StaticResource PressedButtonStyle}">
+                                        <Label FontSize="12"
+                                               FontStyle="Oblique"
+                                               FontWeight="Bold"
+                                               Foreground="Black">
+                                            Close
+                                        </Label>
+                                    </Button>
+                                </Grid>
                                         </Label.Style>
                                     </Label>
-                                </ToggleButton>
+                                </ToggleButton>-->
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

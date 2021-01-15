@@ -9,6 +9,7 @@ using System.Windows.Input;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Interfaces.Console;
 using USBTerminal.Modules.Console;
+using USBTerminal.Modules.Console.Views;
 using USBTerminal.Modules.ModuleName;
 using USBTerminal.Modules.USB;
 using USBTerminal.Modules.USB.ViewModels;
@@ -40,6 +41,7 @@ namespace USBTerminal
 
             containerRegistry.RegisterSingleton<IRunFactory, RunFactory>();
             containerRegistry.Register<USBPortViewModel>();// childe vm
+            containerRegistry.Register<CustomRichTextBox>();
 
             var config = new MapperConfiguration(cfg =>
             {

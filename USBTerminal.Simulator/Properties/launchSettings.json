@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "USBTerminal.Simulator": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\evgeni0s\\Sources\\USBTerminal\\USBTerminal\\USBTerminal\\bin\\x86\\Debug\\netcoreapp3.1\\USBTerminal.exe"
+    }
+  }
+}
