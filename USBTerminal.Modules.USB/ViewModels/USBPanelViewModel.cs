@@ -79,10 +79,10 @@ namespace USBTerminal.Modules.USB.ViewModels
             GetViewModel(port).IsOpen = port.IsOpen;
         }
 
-        private void RemovePort(SerialPortModel port)
+        private void RemovePort(string portName)
         {
-            this.logger.Information($"Removed port: {port.PortName}");
-            var vmToRemove = AvailablePorts.FirstOrDefault(p => p.PortName == port.PortName);
+            this.logger.Information($"Removed port: {portName}");
+            var vmToRemove = AvailablePorts.FirstOrDefault(p => p.PortName == portName);
             AvailablePorts.Remove(vmToRemove);
         }
 
