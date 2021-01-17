@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Services\USBTerminal.Services\USBTerminal.Services.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Core\USBTerminal.Core.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Modules.USB\USBTerminal.Modules.USB.csproj" />
+    <ProjectReference Include="..\..\USBTerminal.Modules.Wifi\USBTerminal.Modules.Wifi.csproj" />
     <ProjectReference Include="..\Modules\USBTerminal.Modules.Console\USBTerminal.Modules.Console.csproj" />
   </ItemGroup>
 </Project>
