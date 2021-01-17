@@ -79,6 +79,17 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
+                    <GridViewColumn Header="RTS" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsEnabled="{Binding IsOpen, Converter={StaticResource InvertedBoolConverter}}"
+                                          IsChecked="{Binding RtsEnable, FallbackValue=True}" 
+                                          ToolTip="Request To Send. Example. When open port to Arduino, we do not get any message.
+                                          Setting this option to true fixes the problem."/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                     <GridViewColumn Header="Connect" Width="140" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
@@ -97,7 +108,7 @@
                                             Open
                                         </Label>
                                     </Button>
-                                    
+
                                     <Button Width="120"
                                             Height="25"
                                             VerticalAlignment="Center"
@@ -127,9 +138,6 @@
                                         </Label>
                                     </Button>
                                 </Grid>
-                                        </Label.Style>
-                                    </Label>
-                                </ToggleButton>-->
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

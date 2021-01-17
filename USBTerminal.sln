@@ -5,11 +5,7 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B21E3C7E-9506-45BD-B6A9-456411C92512}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Modules.ModuleName.Tests", "USBTerminal\Tests\USBTerminal.Modules.ModuleName.Tests\USBTerminal.Modules.ModuleName.Tests.csproj", "{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8568E95C-52BD-49EC-A1BA-1E597DF43C59}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Modules.ModuleName", "USBTerminal\Modules\USBTerminal.Modules.ModuleName\USBTerminal.Modules.ModuleName.csproj", "{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4BE29B90-9162-4848-92CD-F03E7CB0178C}"
 EndProject
@@ -32,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Tests", "Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Core.Tests", "Tests\USBTerminal.Core.Tests\USBTerminal.Core.Tests.csproj", "{C9D43942-7009-4FD8-9E39-C53F6FE5A7E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBTerminal.Simulator", "USBTerminal.Simulator\USBTerminal.Simulator.csproj", "{6EBE1DE2-E409-480F-A1AF-AE627B6AD908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Simulator", "USBTerminal.Simulator\USBTerminal.Simulator.csproj", "{6EBE1DE2-E409-480F-A1AF-AE627B6AD908}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,22 +38,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Debug|x86.ActiveCfg = Debug|x86
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Debug|x86.Build.0 = Debug|x86
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Release|x86.ActiveCfg = Release|x86
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0}.Release|x86.Build.0 = Release|x86
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Debug|x86.ActiveCfg = Debug|x86
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Debug|x86.Build.0 = Debug|x86
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Release|x86.ActiveCfg = Release|x86
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51}.Release|x86.Build.0 = Release|x86
 		{49F81391-FA67-4F62-B52B-424D450972C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{49F81391-FA67-4F62-B52B-424D450972C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49F81391-FA67-4F62-B52B-424D450972C1}.Debug|x86.ActiveCfg = Debug|x86
@@ -133,8 +113,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{EC59B7AA-B51F-4849-9749-4A36B1EF97F0} = {B21E3C7E-9506-45BD-B6A9-456411C92512}
-		{9BF43EA4-0CE7-4E4B-9B2D-A07E30704A51} = {8568E95C-52BD-49EC-A1BA-1E597DF43C59}
 		{65DAFEB0-92B9-4E0A-AC9D-D18BE4E1B168} = {8568E95C-52BD-49EC-A1BA-1E597DF43C59}
 		{405ED3D3-A341-42B5-9431-06D44D862699} = {8568E95C-52BD-49EC-A1BA-1E597DF43C59}
 		{9D752909-B83F-4B27-B9A7-DFE9F31F228F} = {4BE29B90-9162-4848-92CD-F03E7CB0178C}

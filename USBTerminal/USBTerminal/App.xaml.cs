@@ -10,7 +10,6 @@ using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Interfaces.Console;
 using USBTerminal.Modules.Console;
 using USBTerminal.Modules.Console.Views;
-using USBTerminal.Modules.ModuleName;
 using USBTerminal.Modules.USB;
 using USBTerminal.Modules.USB.ViewModels;
 using USBTerminal.Services;
@@ -35,7 +34,6 @@ namespace USBTerminal
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IMessageService, MessageService>();
             containerRegistry.RegisterSingleton<IDialogService, DialogService>();
             containerRegistry.RegisterSingleton<IUSBService, USBService>();
 
@@ -66,7 +64,6 @@ namespace USBTerminal
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
-            moduleCatalog.AddModule<ModuleNameModule>();
             moduleCatalog.AddModule<ConsoleModule>();
             moduleCatalog.AddModule<USBModule>();
         }

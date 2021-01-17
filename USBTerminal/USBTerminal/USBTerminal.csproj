@@ -19,6 +19,5 @@
     <ProjectReference Include="..\..\USBTerminal.Core\USBTerminal.Core.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Modules.USB\USBTerminal.Modules.USB.csproj" />
     <ProjectReference Include="..\Modules\USBTerminal.Modules.Console\USBTerminal.Modules.Console.csproj" />
-    <ProjectReference Include="..\Modules\USBTerminal.Modules.ModuleName\USBTerminal.Modules.ModuleName.csproj" />
   </ItemGroup>
 </Project>

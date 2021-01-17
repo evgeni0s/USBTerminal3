@@ -36,6 +36,7 @@ namespace USBTerminal.Modules.Console.ViewModels
         private DelegateCommand saveCommand;
         private DelegateCommand clearCommand;
         private string title;
+        private bool showTimestamp;
 
         public ConsoleViewModel(IRegionManager regionManager, 
             ILogger logger, 
@@ -72,6 +73,15 @@ namespace USBTerminal.Modules.Console.ViewModels
         {
             get { return title; }
             set { SetProperty(ref title, value); }
+        }
+
+        public bool ShowTimestamp
+        {
+            get { return showTimestamp; }
+            set { 
+                SetProperty(ref showTimestamp, value);
+                CustomRichTextBox.ShowTimeStamp(value);
+            }
         }
 
         public DelegateCommand SaveCommand =>

@@ -59,8 +59,7 @@
         <Paragraph x:Name="readOnlyItems" >
             <local:CustomRun FontSize="13"
                                  FontWeight="Bold"
-                                 Foreground="LimeGreen"
-                             Text="readonly text">
+                                 Foreground="LimeGreen">
             </local:CustomRun>
         </Paragraph>
         <Paragraph MinWidowLines="15" x:Name="inputFieldParent">

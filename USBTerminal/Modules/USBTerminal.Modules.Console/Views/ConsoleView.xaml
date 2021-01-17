@@ -55,6 +55,14 @@
                             <Image Source="/USBTerminal.Core;component/Resources/save_as.png" Width="17"></Image>
                         </Button>
 
+                        <CheckBox Height="30"
+                                Margin="10,0,0,0"
+                                ToolTip="Save Console's Content"
+                                Content="Time stamp"
+                                FontFamily="Tele-Marines"
+                                IsChecked="{Binding ShowTimestamp}"
+                                Background="LimeGreen">
+                        </CheckBox>
                     </StackPanel>
                 </Grid>
             </Border>

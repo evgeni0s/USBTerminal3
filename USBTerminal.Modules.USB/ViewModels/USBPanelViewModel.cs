@@ -53,10 +53,11 @@ namespace USBTerminal.Modules.USB.ViewModels
                 logger.Information($"{port.PortName}");
             }
             AvailablePorts = new ObservableCollection<USBPortViewModel>(portViewModels);
-            eventAggregator.GetEvent<PortAddedEvent>().Subscribe(AddPort);
-            eventAggregator.GetEvent<PortRemovedEvent>().Subscribe(RemovePort);
+            eventAggregator.GetEvent<PortAddedEvent>().Subscribe(AddPort, ThreadOption.UIThread);
+            eventAggregator.GetEvent<PortRemovedEvent>().Subscribe(RemovePort, ThreadOption.UIThread);
             eventAggregator.GetEvent<PortOpenedEvent>().Subscribe(OnPortOpened);
             eventAggregator.GetEvent<PortClosedEvent>().Subscribe(OnPortClosed);
+            eventAggregator.GetEvent<PortErrorEvent>().Subscribe(OnPortError);
         }
 
         public ObservableCollection<USBPortViewModel> AvailablePorts
@@ -88,8 +89,15 @@ namespace USBTerminal.Modules.USB.ViewModels
 
         private void AddPort(SerialPortModel port)
         {
-            //this.logger.Information($"Added port: {port.PortName}");
+            this.logger.Information($"Added port: {port.PortName}");
             AvailablePorts.Add(CreatePortViewModel(port));
+        }
+
+        private void OnPortError(SerialPortModel port)
+        {
+            this.logger.Error($"Unexpected error. Closing port: {port.PortName}");
+            var vm = AvailablePorts.FirstOrDefault(p => p.PortName == port.PortName);
+            vm.IsOpen = false;
         }
 
         private USBPortViewModel CreatePortViewModel(SerialPortModel port)

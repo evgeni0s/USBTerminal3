@@ -33,6 +33,7 @@ namespace USBTerminal.Modules.Console.Views
         private List<Key> keysRequireFix = new List<Key>() { Key.Space, Key.Enter, Key.Back, Key.Delete, Key.Up, Key.Down };
         private Run _focusedInline;
         private bool isEnabledCustom = true;
+        private bool showTimeStamp = false;
         private readonly IRunFactory runFactory;
         private readonly IEventAggregator eventAggregator;
 
@@ -357,13 +358,23 @@ namespace USBTerminal.Modules.Console.Views
             readOnlyItems.Dispatcher.BeginInvoke(new Action(() =>
             {
                 var run = runFactory.Get(runType) as Run;
-                run.Text = message; // + Environment.NewLine;
+
+                if (showTimeStamp)
+                {
+                    run.Text += $"[{DateTime.Now}]: ";
+                }
+                run.Text += message; // + Environment.NewLine;
                 readOnlyItems.Inlines.Add(run);
                 readOnlyItems.Inlines.Add(new Run(Environment.NewLine));//problems with extra lines
                 ScrollToEnd();
                 _focusedInline = null;
             }
             ));
+        }
+
+        public void ShowTimeStamp(bool value)
+        {
+            showTimeStamp = value;
         }
 
         public static class ThreadContext

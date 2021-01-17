@@ -28,6 +28,7 @@ namespace USBTerminal.Modules.USB.ViewModels
         private double _stopBits;
         private string _dataMode = "Default";
         private bool _isOpen;
+        private bool _rtsEnable;
 
         public USBPortViewModel(IUSBService usbService,
             IMapper mapper,
@@ -119,6 +120,15 @@ namespace USBTerminal.Modules.USB.ViewModels
             set
             {
                 SetProperty(ref _dataMode, value);
+            }
+        }
+
+        public bool RtsEnable
+        {
+            get => _rtsEnable;
+            set
+            {
+                SetProperty(ref _rtsEnable, value);
             }
         }
 

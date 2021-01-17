@@ -8,6 +8,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Timers;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Utils;
@@ -29,9 +30,10 @@ namespace USBTerminal.Services
         private double[] stopBits = new[] { 0, 1, 2, 1.5 };
         private string[] dataMode = new[] { "Text", "Hex" };
         private string[] parities = new[] { "None", "Odd", "Even", "Mark", "Space" };
-        private readonly int RefreshRate = 5000;
+        private readonly int refreshRate = 5000;
+        private readonly int openTimeOut = 10000;
         private Timer timer = new Timer();
-        private readonly ChangesTracker<SerialPortModel, SerialPort> tracker;
+        private ChangesTracker<SerialPortModel, SerialPort> tracker;
         private readonly IMapper mapper;
         private DelegateCommand<SerialPortModel> openPortCommand;
         private DelegateCommand<SerialPortModel> closePortCommand;
@@ -58,54 +60,18 @@ namespace USBTerminal.Services
 
             // Listen to changes
             timer.Elapsed += new ElapsedEventHandler(RefreshPorts);
-            timer.Interval = 5000;
+            timer.Interval = refreshRate;
             timer.Enabled = true;
-            Test();
-        }
-
-        static bool IsSubscribed;
-
-        private void Test()
-        {
-            foreach (var port in systemPorts)
-            {
-                port.DataReceived += dataReceived;
-            }
-            IsSubscribed = true;
         }
 
         private SerialPort CreateSystemPort(string portName)
         {
             var port = new SerialPort(portName);
+            port.DataReceived += dataReceived; // Subscription after port was opened did not work in RefreshPorts 
+            port.ErrorReceived += errorReceived;
             return port;
         }
 
-        public void dataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            if (e.EventType == System.IO.Ports.SerialData.Eof)
-            {
-                return;
-            }
-
-            var port = sender as SerialPort;
-            var localPort = tracker.Match(port);  
-            var @event = new SerialPortMessage();
-            if (localPort.DataMode == "Text")  // ToDo: DataMode is null. Either skip this check or make
-                                               //syncronization between 2 instances of all
-            {
-                @event.TextData = port.ReadExisting();
-            }
-            else if (localPort.DataMode == "Hex")
-            {
-                logger.Warning("Warning. Reading data in hex format. Functionality was not tested yet.");
-                int bytes = port.BytesToRead;
-                @event.HexData = new byte[bytes];
-                port.Read(@event.HexData, 0, bytes);
-            }
-
-            logger.Information($"{port.PortName}: Data recieved.");
-            eventAggregator.GetEvent<UsbMessageReceivedEvent>().Publish(@event);
-        }
 
         public DelegateCommand<SerialPortModel> OpenPortCommand
         {
@@ -154,17 +120,21 @@ namespace USBTerminal.Services
                 logger.Information($"Trying to open port: {jsonString}");
 
                 // Copy properties to local port since remotely they could change on GUI 
-                var localPort = localPorts.FirstOrDefault(p => AreEqual(p,port));
+                var localPort = localPorts.FirstOrDefault(p => AreEqual(p, port));
                 mapper.Map(port, localPort);
 
                 // Copy properties to system port
                 var systemPort = tracker.Match(port);
                 mapper.Map(port, systemPort);
+
                 systemPort.Open();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                logger.Error($"Error when opening port: {port.PortName}");
+                logger.Error(e.Message);
+                logger.Error(e.StackTrace);
+                eventAggregator.GetEvent<PortErrorEvent>().Publish(port);
             }
         }
 
@@ -211,22 +181,18 @@ namespace USBTerminal.Services
         {
             lock (lockObject)
             {
-                tracker.Refresh();
+                // ToDo: port Added and removed does not work now
                 foreach (var added in tracker.AddedItems)
                 {
                     var localPort = mapper.Map<SerialPortModel>(added);
                     localPorts.Add(localPort);
-                    added.DataReceived += dataReceived;
                     eventAggregator.GetEvent<PortAddedEvent>().Publish(localPort);
                 }
 
                 foreach (var removed in tracker.RemovedItems)
                 {
-                    var localPort = mapper.Map<SerialPortModel>(removed);
-                    var systemPort = tracker.Match(localPort);
-                    systemPort.DataReceived -= dataReceived;
-                    localPorts.Remove(localPort);
-                   // eventAggregator.GetEvent<PortRemovedEvent>().Publish(localPort);
+                    localPorts.Remove(removed);
+                    eventAggregator.GetEvent<PortRemovedEvent>().Publish(removed.PortName);
                 }
 
                 foreach (var updated in tracker.UpdatedItems)
@@ -242,8 +208,48 @@ namespace USBTerminal.Services
                         mapper.Map(systemPort, updated); // Save changes locally
                         eventAggregator.GetEvent<PortOpenedEvent>().Publish(updated);
                     }
+                    if (systemPort.IsOpen)
+                    {
+                        string a = systemPort.ReadExisting();
+                    }
+
+                   
                 }
             }
+        }
+
+        public void dataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (e.EventType == System.IO.Ports.SerialData.Eof)
+            {
+                return;
+            }
+
+            var port = sender as SerialPort;
+            var localPort = tracker.Match(port);
+            var @event = new SerialPortMessage();
+            if (localPort.DataMode == "Text")  // ToDo: DataMode is null. Either skip this check or make
+                                               //syncronization between 2 instances of all
+            {
+                @event.TextData = port.ReadExisting();
+            }
+            else if (localPort.DataMode == "Hex")
+            {
+                logger.Warning("Warning. Reading data in hex format. Functionality was not tested yet.");
+                int bytes = port.BytesToRead;
+                @event.HexData = new byte[bytes];
+                port.Read(@event.HexData, 0, bytes);
+            }
+
+            logger.Information($"{port.PortName}: Data recieved.");
+            eventAggregator.GetEvent<UsbMessageReceivedEvent>().Publish(@event);
+        }
+
+        private void errorReceived(object sender, SerialErrorReceivedEventArgs e)
+        {
+            logger.Error($"Error received from system port: {e.EventType}");
+
+           // eventAggregator.GetEvent<PortErrorEvent>().Publish(port);
         }
 
         private bool AreEqual(SerialPortModel portModel, SerialPort systemPorts)

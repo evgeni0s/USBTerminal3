@@ -12,6 +12,7 @@ namespace USBTerminal.Services.Interfaces.Models
         public string DataBits { get; set; }
         public string StopBits { get; set; }
         public string DataMode { get; set; }
+        public bool RtsEnable { get; set; }
         public bool IsOpen { get; set; }
     }
 }
