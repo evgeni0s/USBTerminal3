@@ -72,7 +72,6 @@ namespace USBTerminal.Services
             return port;
         }
 
-
         public DelegateCommand<SerialPortModel> OpenPortCommand
         {
             get { return openPortCommand ?? (openPortCommand = new DelegateCommand<SerialPortModel>(ExecuteOpenPortCommand)); }

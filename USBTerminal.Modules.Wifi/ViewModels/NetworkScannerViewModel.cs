@@ -6,39 +6,80 @@ using Prism.Regions;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Interfaces.Events;
+using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Modules.Wifi.ViewModels
 {
     public class NetworkScannerViewModel : RegionViewModelBase
     {
-        private readonly ILogger logger;
         private DelegateCommand scanCommand;
         private DelegateCommand saveCommand;
         private DelegateCommand clearCommand;
-        private readonly IApplicationCommands applicationCommands;
         private readonly IIPScanner ipScanner;
         private readonly IEventAggregator eventAggregator;
-        private readonly IMapper mapper;
-        private readonly IContainerProvider container;
+        //private readonly IMapper mapper;
+        //private readonly IContainerProvider container;
+        //private string ip;
+        //private string hostName;
+        private List<DNSModel> dnsModels;
+        private DNSModel machineInfo;
+        private string title = "Network Scanner";
+
         public NetworkScannerViewModel(IRegionManager regionManager,
             ILogger logger,
             IApplicationCommands applicationCommands,
             IEventAggregator eventAggregator,
-            IMapper mapper, 
-            IIPScanner ipScanner,
-            IContainerProvider container)
+            //IMapper mapper, 
+            IIPScanner ipScanner
+            //IContainerProvider container
+            )
             : base(regionManager, logger)
         {
-            this.logger = logger;
-            this.applicationCommands = applicationCommands;
+            ApplicationCommands = applicationCommands;
             this.ipScanner = ipScanner;
             this.eventAggregator = eventAggregator;
-            this.container = container;
-            this.mapper = mapper;
+            this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Subscribe(OnNetworkScanCompleted);
+            //this.container = container;
+            //this.mapper = mapper;
+            MachineInfo = ipScanner.GetCurrentMachineInfo();
+        }
+
+        public IApplicationCommands ApplicationCommands { get; set; }
+
+        public DNSModel MachineInfo
+        {
+            get { return machineInfo; }
+            set { SetProperty(ref machineInfo, value); }
+        }
+
+        public string Title
+        {
+            get { return title; }
+            set { SetProperty(ref title, value); }
+        }
+
+        //public string Ip
+        //{
+        //    get { return ip; }
+        //    set { SetProperty(ref ip, value); }
+        //}
+
+        //public string HostName
+        //{
+        //    get { return hostName; }
+        //    set { SetProperty(ref hostName, value); }
+        //}
+
+        public List<DNSModel> DnsModels
+        {
+            get { return dnsModels; }
+            set { SetProperty(ref dnsModels, value); }
         }
 
         public DelegateCommand SaveCommand
@@ -61,13 +102,18 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             throw new NotImplementedException();
         }
 
-        public DelegateCommand ScanCommand
+        private void OnNetworkScanCompleted(List<DNSModel> dnsList)
         {
-            get { return scanCommand ?? (scanCommand = new DelegateCommand(ExecuteScanCommand)); }
+            DnsModels = dnsList;
         }
-        private void ExecuteScanCommand()
-        {
-            
-        }
+
+        //public DelegateCommand ScanCommand
+        //{
+        //    get { return scanCommand ?? (scanCommand = new DelegateCommand(ExecuteScanCommand)); }
+        //}
+        //private void ExecuteScanCommand()
+        //{
+
+        //}
     }
 }

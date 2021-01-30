@@ -13,10 +13,13 @@ namespace USBTerminal.Views
             InitializeComponent();
         }
 
-        private void HamburgerMenuControl_OnItemClick(object sender, ItemClickEventArgs e)
+        private void HamburgerMenuControl_HamburgerButtonClick(object sender, RoutedEventArgs e)
         {
-           // this.HamburgerMenuControl.Content = e.ClickedItem;
-           // this.HamburgerMenuControl.IsPaneOpen = false;
+            HumburgerMenuCol.Width = new GridLength(
+                HamburgerMenuControl.IsPaneOpen
+                ? HamburgerMenuControl.HamburgerWidth
+                : 240
+            );
         }
     }
 }

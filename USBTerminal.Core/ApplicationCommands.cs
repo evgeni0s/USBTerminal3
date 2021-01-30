@@ -14,5 +14,8 @@ namespace USBTerminal.Core
         public CompositeCommand OpenPortCommand { get; } = new CompositeCommand();
         public CompositeCommand ClosePortCommand { get; } = new CompositeCommand();
         public CompositeCommand SendMessageToPortCommand { get; } = new CompositeCommand();
+        public CompositeCommand ScanNetworkCommand { get; } = new CompositeCommand();
+
+        public CompositeCommand ConnectOverNetworkCommand => throw new NotImplementedException();
     }
 }

@@ -27,12 +27,11 @@ namespace USBTerminal.Core.Mvvm
 
         public virtual void OnNavigatedFrom(NavigationContext navigationContext)
         {
-
         }
 
         public virtual void OnNavigatedTo(NavigationContext navigationContext)
         {
-
+            Logger.Information($"Navigated to {navigationContext.Uri}");
         }
     }
 }

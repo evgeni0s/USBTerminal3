@@ -7,6 +7,12 @@ namespace USBTerminal.Services.Interfaces.Models
     public class DNSModel
     {
         public string IP { get; set; }
+
+        /// <summary>
+        /// "10.22.4."
+        /// </summary>
+        public string BaseIP { get; set; }
         public string HostName { get; set; }
+        public string Port { get; set; }
     }
 }

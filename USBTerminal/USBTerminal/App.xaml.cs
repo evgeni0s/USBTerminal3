@@ -15,7 +15,9 @@ using USBTerminal.Modules.USB.ViewModels;
 using USBTerminal.Modules.Wifi;
 using USBTerminal.Services;
 using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Interfaces.SocketConnection;
 using USBTerminal.Services.Profiles;
+using USBTerminal.Services.SocketConnection;
 using USBTerminal.Views;
 using ApplicationCommands = USBTerminal.Core.ApplicationCommands;
 
@@ -37,8 +39,10 @@ namespace USBTerminal
         {
             containerRegistry.RegisterSingleton<IDialogService, DialogService>();
             containerRegistry.RegisterSingleton<IUSBService, USBService>();
-
+            containerRegistry.RegisterSingleton<IIPScanner, IPScanner>();
             containerRegistry.RegisterSingleton<IRunFactory, RunFactory>();
+            containerRegistry.RegisterSingleton<ISocketServer, SocketServer>();
+            containerRegistry.RegisterSingleton<IStateObject, StateObject>();
             containerRegistry.Register<USBPortViewModel>();// childe vm
             containerRegistry.Register<CustomRichTextBox>();
 
@@ -50,6 +54,7 @@ namespace USBTerminal
                 // Profiles are for each module so that it could add extra mappings on top of common
                 cfg.AddProfile<USBServiceProfile>();
                 cfg.AddProfile<USBModuleProfile>();
+                cfg.AddProfile<IPScannerProfile>();
             });
 
             containerRegistry.RegisterSingleton<IConfigurationProvider>(() => config);

@@ -10,8 +10,16 @@ namespace USBTerminal.Core.Interfaces
     {
         CompositeCommand TerminalCommand { get; }
         CompositeCommand LoggingCommand { get; }
+
+        #region USB
         CompositeCommand OpenPortCommand { get; }
         CompositeCommand ClosePortCommand { get; }
         CompositeCommand SendMessageToPortCommand { get; }
+        #endregion
+
+        #region Network
+        CompositeCommand ScanNetworkCommand { get; }
+        CompositeCommand ConnectOverNetworkCommand { get; }
+        #endregion
     }
 }

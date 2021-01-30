@@ -6,26 +6,30 @@
         xmlns:core="clr-namespace:USBTerminal.Core;assembly=USBTerminal.Core" 
         xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        Title="{Binding Title}" Height="500" Width="800" >
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="{Binding Title}" Height="800" Width="800" >
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <utils:VisibilityConverter x:Key="boolToVis" />
-            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type controls:HamburgerMenuGlyphItem}">
+
+            <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type controls:HamburgerMenuIconItem}">
                 <Grid Height="48">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               FontSize="16"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe MDL2 Assets"
-                               Text="{Binding Glyph}" />
+                    <Grid Grid.Column="0">
+                        <Viewbox ToolTip="{Binding Label}" Width="25" Height="25" >
+                            <Viewbox.Child>
+                                <ContentControl Content="{Binding Path=Icon}"></ContentControl>
+                            </Viewbox.Child>
+                        </Viewbox>
+                    </Grid>
                     <TextBlock Grid.Column="1"
-                               VerticalAlignment="Center"
-                               FontSize="16"
-                               Text="{Binding Label}" />
+               VerticalAlignment="Center"
+               FontSize="16"
+               Foreground="White"
+               Text="{Binding Label}" />
                 </Grid>
             </DataTemplate>
 
@@ -51,43 +55,64 @@
 
     </controls:MetroWindow.Resources>
 
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!--Width is controled in backend-->
+            <ColumnDefinition Width="48" x:Name="HumburgerMenuCol"/> 
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
     <!--Menu-->
     <!--
         https://github.com/punker76/code-samples
         https://jkarger.de/2017/02/06/mahapps-hamburgermenu/
+        
+        HamburgerWidth="50" - Icon that expands menu
         -->
     <controls:HamburgerMenu x:Name="HamburgerMenuControl"
                                 IsPaneOpen="False"
                                 ItemTemplate="{StaticResource MenuItemTemplate}"
                                 OptionsItemTemplate="{StaticResource OptionsMenuItemTemplate}"
-                                ItemClick="HamburgerMenuControl_OnItemClick"
-                                OptionsItemClick="HamburgerMenuControl_OnItemClick"
-                                SelectedIndex="1"
-                                DisplayMode="CompactInline">
+                                HamburgerButtonClick="HamburgerMenuControl_HamburgerButtonClick" 
+                                DisplayMode="CompactInline"> 
 
         <!--  Items  -->
         <controls:HamburgerMenu.ItemsSource>
             <controls:HamburgerMenuItemCollection>
-                <controls:HamburgerMenuGlyphItem Glyph="" Label="Home"/>
-                <controls:HamburgerMenuGlyphItem Glyph="" Label="Private"/>
-                <controls:HamburgerMenuGlyphItem Glyph="" Label="Settings"/>
+                <controls:HamburgerMenuIconItem Label="USB Connection" Command="{Binding NavigateCommand}" 
+                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                    <controls:HamburgerMenuIconItem.Icon>
+                        <iconPacks:PackIconForkAwesome Kind="Usb" />
+                    </controls:HamburgerMenuIconItem.Icon>
+                </controls:HamburgerMenuIconItem>
+
+                <controls:HamburgerMenuIconItem Label="Network Connection" Command="{Binding NavigateCommand}" 
+                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                        <controls:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconModern Kind="NetworkHome" />
+                        </controls:HamburgerMenuIconItem.Icon>
+                </controls:HamburgerMenuIconItem>
+
+                <controls:HamburgerMenuIconItem Label="Settings" Command="{Binding NavigateCommand}" 
+                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                    <controls:HamburgerMenuIconItem.Icon>
+                        <iconPacks:PackIconForkAwesome Kind="Cog" />
+                    </controls:HamburgerMenuIconItem.Icon>
+                </controls:HamburgerMenuIconItem>
+
             </controls:HamburgerMenuItemCollection>
         </controls:HamburgerMenu.ItemsSource>
-        <!--<iconPacks:PackIconBootstrapIcons Kind="Wifi" />
-        {iconPacks:BootstrapIcons Kind=Wifi}
-        https://github.com/MahApps/MahApps.Metro.IconPacks/releases
-        CONTINUE FROM ADDING ICONS AND Wireing up WiFi Module
-        -->
+        
         <!--  Options  -->
-        <controls:HamburgerMenu.OptionsItemsSource>
-            <controls:HamburgerMenuItemCollection>
-                <controls:HamburgerMenuGlyphItem Glyph="" Label="About"/>
-            </controls:HamburgerMenuItemCollection>
-        </controls:HamburgerMenu.OptionsItemsSource>
-
+            <controls:HamburgerMenu.OptionsItemsSource>
+                <controls:HamburgerMenuItemCollection>
+                    <controls:HamburgerMenuGlyphItem Glyph="" Label="About"/>
+                </controls:HamburgerMenuItemCollection>
+            </controls:HamburgerMenu.OptionsItemsSource>
+        </controls:HamburgerMenu>
+        
         <!--  Content  -->
         <!--Regions-->
-        <Grid Grid.Row="1">
+        <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
@@ -100,7 +125,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ItemsControl Grid.Column="2" prism:RegionManager.RegionName="TestRegion" />
             <Canvas x:Name="Logo"
                     Grid.ColumnSpan="2"
                     RenderTransformOrigin="0.5,0.5">
@@ -147,7 +171,7 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
-                            prism:RegionManager.RegionName="{x:Static core:RegionNames.TopPanelRegion}" />
+                            prism:RegionManager.RegionName="{x:Static core:RegionNames.TopPanelRegion}"/>
 
             <GridSplitter Grid.Row="1"  
                           Grid.ColumnSpan="2" 
@@ -178,9 +202,6 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <!--<ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:RegionNames.MainRegion}" 
-                                Margin="0,20,0,0"/>-->
-
                 <ContentControl x:Name="LeftPanelRegion" 
                                 Grid.Column="0"
                                 prism:RegionManager.RegionName="{x:Static core:RegionNames.LeftPanelRegion}" />
@@ -207,5 +228,5 @@
                             Grid.ColumnSpan="99"
                             prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}" />
         </Grid>
-    </controls:HamburgerMenu>
+    </Grid>
 </controls:MetroWindow>
