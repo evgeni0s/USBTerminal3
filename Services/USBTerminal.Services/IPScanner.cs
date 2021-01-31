@@ -16,6 +16,7 @@ using USBTerminal.Core.Interfaces;
 using USBTerminal.Services.Interfaces;
 using USBTerminal.Services.Interfaces.Events;
 using USBTerminal.Services.Interfaces.Models;
+using USBTerminal.Services.Interfaces.Network.Events;
 
 namespace USBTerminal.Services
 {
@@ -26,7 +27,7 @@ namespace USBTerminal.Services
         private readonly ILogger logger;
         private readonly IMapper mapper;
         private DelegateCommand<string> scanNetworkCommand;
-        private List<DNSModel> allDns = new List<DNSModel>();
+        private List<NetworkConnection> allDns = new List<NetworkConnection>();
 
         private CountdownEvent countdown = new CountdownEvent(1);
         private int upCount = 0;
@@ -52,7 +53,7 @@ namespace USBTerminal.Services
 
         private void ExecuteScanNetworkCommand(string baseIp)
         {
-            allDns = new List<DNSModel>();
+            allDns = new List<NetworkConnection>();
             PingAsync(GetIpRange(baseIp));
         }
 
@@ -76,7 +77,7 @@ namespace USBTerminal.Services
                         logger.Warning(ex.ToString());
                     }
                     logger.Information($"{ip} ({name}) is up: ({e.Reply.RoundtripTime} ms)");
-                    allDns.Add(new DNSModel { HostName = name, IP = GetBaseIp(ip) });
+                    allDns.Add(new NetworkConnection { HostName = name, IP = GetBaseIp(ip) });
                 }
                 else
                 {
@@ -102,14 +103,14 @@ namespace USBTerminal.Services
             var tasks = theListOfIPs.Select(ip => new Ping().SendPingAsync(ip, 2000));
             var results = await Task.WhenAll(tasks);
             var resultsList = results.Where(response => response.Status == IPStatus.Success)
-                .Select(response => mapper.Map<DNSModel>(response)).ToList();
+                .Select(response => mapper.Map<NetworkConnection>(response)).ToList();
 
             this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Publish(resultsList);
         }
 
-        public DNSModel GetCurrentMachineInfo()
+        public NetworkConnection GetCurrentMachineInfo()
         {
-            var dns = new DNSModel();
+            var dns = new NetworkConnection();
             var hostName = Dns.GetHostName();
             var host = Dns.GetHostEntry(hostName);
             var ip = host.AddressList.FirstOrDefault(address => address.AddressFamily == AddressFamily.InterNetwork).ToString();

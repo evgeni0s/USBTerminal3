@@ -26,9 +26,10 @@ namespace USBTerminal.Services.SocketConnection
         private readonly IEventAggregator eventAggregator;
         private readonly IApplicationCommands commands;
         private readonly ILogger logger;
-        private DelegateCommand<DNSModel> connectOverNetworkCommand;
+        private DelegateCommand<NetworkConnection> connectOverNetworkCommand;
         // Thread signal.  
         public ManualResetEvent allDone = new ManualResetEvent(false);
+        private const string defaultPort = "34931";
 
         public SocketServer(IEventAggregator eventAggregator,
             IApplicationCommands commands,
@@ -37,13 +38,13 @@ namespace USBTerminal.Services.SocketConnection
             this.eventAggregator = eventAggregator;
             this.commands = commands;
             this.logger = logger;
-            commands.ConnectOverNetworkCommand.RegisterCommand(ConnectOverNetworkCommand);
+            commands.OpenNetworkConnectionCommand.RegisterCommand(ConnectOverNetworkCommand);
         }
 
 
-        public DelegateCommand<DNSModel> ConnectOverNetworkCommand
+        public DelegateCommand<NetworkConnection> ConnectOverNetworkCommand
         {
-            get { return connectOverNetworkCommand ?? (connectOverNetworkCommand = new DelegateCommand<DNSModel>(ExecuteConnectOverNetworkCommand)); }
+            get { return connectOverNetworkCommand ?? (connectOverNetworkCommand = new DelegateCommand<NetworkConnection>(ExecuteConnectOverNetworkCommand)); }
         }
 
         private  long ToLongAddress(string addr)
@@ -54,7 +55,7 @@ namespace USBTerminal.Services.SocketConnection
                  (int)IPAddress.Parse(addr).Address);
         }
 
-        private void ExecuteConnectOverNetworkCommand(DNSModel model)
+        private void ExecuteConnectOverNetworkCommand(NetworkConnection model)
         {
             // Establish the local endpoint for the socket.  
             // The DNS name of the computer  
@@ -106,6 +107,8 @@ namespace USBTerminal.Services.SocketConnection
             // Signal the main thread to continue.  
             allDone.Set();
 
+            // ???? Client connected? 
+
             // Get the socket that handles the client request.  
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
@@ -142,7 +145,7 @@ namespace USBTerminal.Services.SocketConnection
                 {
                     // All the data has been read from the
                     // client. Display it on the console.  
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                    logger.Information("Read {0} bytes from socket. \n Data : {1}",
                         content.Length, content);
                     // Echo the data back to the client.  
                     Send(handler, content);
@@ -175,7 +178,7 @@ namespace USBTerminal.Services.SocketConnection
 
                 // Complete sending the data to the remote device.  
                 int bytesSent = handler.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to client.", bytesSent);
+                logger.Information("Sent {0} bytes to client.", bytesSent);
 
                 handler.Shutdown(SocketShutdown.Both);
                 handler.Close();
@@ -183,8 +186,13 @@ namespace USBTerminal.Services.SocketConnection
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                logger.Error(e.ToString());
             }
+        }
+
+        public string GetDefaultPort()
+        {
+            return defaultPort;
         }
     }
 }

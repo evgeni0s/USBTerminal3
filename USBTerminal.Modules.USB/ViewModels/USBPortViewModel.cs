@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using USBTerminal.Core.Enums;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces;
@@ -26,7 +27,7 @@ namespace USBTerminal.Modules.USB.ViewModels
         private string _parity;
         private int _dataBits;
         private double _stopBits;
-        private string _dataMode = "Default";
+        private string _dataMode = ButtonStates.Default;
         private bool _isOpen;
         private bool _rtsEnable;
 
@@ -51,7 +52,7 @@ namespace USBTerminal.Modules.USB.ViewModels
 
         private void ExecuteOpenPortCommand()
         {
-            PortState = "Waiting";
+            PortState = ButtonStates.Waiting;
             RaisePropertyChanged(nameof(PortState));
             var dto = mapper.Map<SerialPortModel>(this);
             applicationCommands.OpenPortCommand.Execute(dto);
@@ -64,7 +65,7 @@ namespace USBTerminal.Modules.USB.ViewModels
 
         private void ExecuteClosePortCommand()
         {
-            PortState = "Waiting";
+            PortState = ButtonStates.Waiting;
             RaisePropertyChanged(nameof(PortState));
             var dto = mapper.Map<SerialPortModel>(this);
             applicationCommands.ClosePortCommand.Execute(dto);
@@ -138,7 +139,7 @@ namespace USBTerminal.Modules.USB.ViewModels
             set 
             { 
                 _isOpen = value;
-                PortState = value ? "Pressed" : "Default";
+                PortState = value ? ButtonStates.Pressed : ButtonStates.Default;
                 RaisePropertyChanged(nameof(PortState)); // For some reaason SetProperty does not update GUI
                 SetProperty(ref _isOpen, value);
             }

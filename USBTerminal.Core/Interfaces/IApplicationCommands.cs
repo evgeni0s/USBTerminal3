@@ -19,7 +19,8 @@ namespace USBTerminal.Core.Interfaces
 
         #region Network
         CompositeCommand ScanNetworkCommand { get; }
-        CompositeCommand ConnectOverNetworkCommand { get; }
+        CompositeCommand OpenNetworkConnectionCommand { get; }
+        CompositeCommand CloseNetworkConnectionCommand { get; }
         #endregion
     }
 }

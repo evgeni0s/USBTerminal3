@@ -13,6 +13,7 @@ using USBTerminal.Modules.Console.Views;
 using USBTerminal.Modules.USB;
 using USBTerminal.Modules.USB.ViewModels;
 using USBTerminal.Modules.Wifi;
+using USBTerminal.Modules.Wifi.ViewModels;
 using USBTerminal.Services;
 using USBTerminal.Services.Interfaces;
 using USBTerminal.Services.Interfaces.SocketConnection;
@@ -44,6 +45,7 @@ namespace USBTerminal
             containerRegistry.RegisterSingleton<ISocketServer, SocketServer>();
             containerRegistry.RegisterSingleton<IStateObject, StateObject>();
             containerRegistry.Register<USBPortViewModel>();// childe vm
+            containerRegistry.Register<NetworkConnectionViewModel>();// childe vm
             containerRegistry.Register<CustomRichTextBox>();
 
             var config = new MapperConfiguration(cfg =>
@@ -54,6 +56,7 @@ namespace USBTerminal
                 // Profiles are for each module so that it could add extra mappings on top of common
                 cfg.AddProfile<USBServiceProfile>();
                 cfg.AddProfile<USBModuleProfile>();
+                cfg.AddProfile<WifiModuleProfile>();
                 cfg.AddProfile<IPScannerProfile>();
             });
 

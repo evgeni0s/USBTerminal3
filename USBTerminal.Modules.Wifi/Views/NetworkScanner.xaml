@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:USBTerminal.Modules.Wifi.Views"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              MinHeight="70"
              mc:Ignorable="d">
     <Grid>
@@ -33,35 +35,118 @@
             </Grid.RowDefinitions>
 
             
-            <Grid MaxWidth="250" Margin="0,0,15,0">
+            <Grid MaxWidth="250" Margin="0,15">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80"/>
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center">Current machine</TextBlock>
-                <Label Grid.Row="1">IP</Label>
+                <TextBlock Grid.ColumnSpan="2" 
+                           HorizontalAlignment="Center" 
+                           FontSize="16" Margin="0,0,0,10">Current machine</TextBlock>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label  FontWeight="Bold">IP</Label>
+                    <iconPacks:PackIconMaterial Kind="HelpCircleOutline" 
+                                                Width="14" 
+                                                Background="White"
+                                                Foreground="#FF6E51AC" 
+                                                Margin="30,5,0,0">
+                             <iconPacks:PackIconMaterial.ToolTip>
+                                  <TextBlock>
+                                      You can change this IP and press the scann button.
+                                      <LineBreak /> 
+                                      This will ping 256 devices on same subnetwork. Ex. xxx.xxx.xxx.[0-255]"
+                                   </TextBlock>
+                            </iconPacks:PackIconMaterial.ToolTip>
+                    </iconPacks:PackIconMaterial>
+                </StackPanel>
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MachineInfo.IP}"/>
-                <Label Grid.Row="2">Host Name</Label>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MachineInfo.HostName}"></TextBlock>
+                <Label Grid.Row="2" FontWeight="Bold">Host Name</Label>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MachineInfo.HostName}"
+                           Margin="0,5,0,0"></TextBlock>
             </Grid>
 
-            <Label Grid.Row="1" HorizontalAlignment="Center">Other devices on network</Label>
+            <Label Grid.Row="1" 
+                   HorizontalAlignment="Center" 
+                   FontSize="16"
+                   Margin="0,0,0,10"
+                   >Other devices on your network</Label>
             <!--DNS on corrent network-->
-            <ScrollViewer Grid.Row="2">
-                <ListView ItemsSource="{Binding DnsModels}" >
+            <ScrollViewer Grid.Row="2" >
+                <ListView ItemsSource="{Binding NetworkConnections}" >
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Width="90" DisplayMemberBinding="{Binding IP}" Header="Ip" />
-                            <GridViewColumn Width="90" DisplayMemberBinding="{Binding HostName}" Header="Host Name" />
+                            <GridViewColumn Width="150" DisplayMemberBinding="{Binding HostName}" Header="Host Name" />
+                            <GridViewColumn Width="150"  Header="Port">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding Port, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Connect" Width="140" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Button Width="120"
+                                            Height="25"
+                                            VerticalAlignment="Center"
+                                            x:Name="OpenPortButton"
+                                            Visibility="{Binding ConnectionState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Default}"
+                                            Command="{Binding OpenConnectionCommand}"
+                                            Style="{StaticResource DefaultButtonStyle}">
+                                                <Label FontSize="12"
+                                                FontStyle="Oblique"
+                                                FontWeight="Bold"
+                                                Foreground="White">
+                                                    Open
+                                                </Label>
+                                            </Button>
+
+                                            <Button Width="120"
+                                            Height="25"
+                                            VerticalAlignment="Center"
+                                            x:Name="WaitingStateButton"
+                                            Visibility="{Binding ConnectionState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Waiting}"
+                                            Style="{StaticResource WaitingButtonStyle}">
+                                                <Label FontSize="12"
+                                               FontStyle="Oblique"
+                                               FontWeight="Bold"
+                                               Foreground="Black">
+                                                    In Progress
+                                                </Label>
+                                            </Button>
+
+                                            <Button Width="120"
+                                            Height="25"
+                                            VerticalAlignment="Center"
+                                            x:Name="PressedStateButton"
+                                            Visibility="{Binding ConnectionState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Pressed}"
+                                            Command="{Binding CloseConnectionCommand}"
+                                            Style="{StaticResource PressedButtonStyle}">
+                                                <Label FontSize="12"
+                                               FontStyle="Oblique"
+                                               FontWeight="Bold"
+                                               Foreground="Black">
+                                                    Close
+                                                </Label>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
             </ScrollViewer>
+            <controls:ProgressRing Grid.Row="2" x:Name="loadingRing"
+                                   Visibility="{Binding DnsScanningState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Waiting}"/>
+            <!-- Without MahApps -->
         </Grid>
         
         
@@ -91,15 +176,14 @@
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                             <Image Source="/USBTerminal.Core;component/Resources/save_as.png" Width="17"></Image>
                         </Button>
-                        
+
                         <Button Height="30"
                                 Margin="10,0,0,0"
-                                ToolTip="Start device discuvery on network"
-                                Command="{Binding ApplicationCommands.ScanNetworkCommand}"
-                                CommandParameter="{Binding MachineInfo.BaseIP}"
+                                ToolTip="Ping devices on local network"
+                                Command="{Binding ScanNetworkCommand}"
                                 FontFamily="Tele-Marines"
                                 Background="LimeGreen">
-                            Scan
+                            <iconPacks:PackIconMaterial Kind="Radar" />
                         </Button>
                     </StackPanel>
                 </Grid>

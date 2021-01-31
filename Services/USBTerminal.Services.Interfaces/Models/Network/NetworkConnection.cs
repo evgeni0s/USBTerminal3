@@ -4,7 +4,7 @@ using System.Text;
 
 namespace USBTerminal.Services.Interfaces.Models
 {
-    public class DNSModel
+    public class NetworkConnection
     {
         public string IP { get; set; }
 

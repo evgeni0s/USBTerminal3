@@ -6,5 +6,6 @@ namespace USBTerminal.Services.Interfaces.SocketConnection
 {
     public interface ISocketServer
     {
+        string GetDefaultPort();
     }
 }

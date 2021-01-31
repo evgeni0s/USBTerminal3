@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -12,22 +12,16 @@ namespace USBTerminal.Services.Profiles
     {
         public IPScannerProfile()
         {
-            CreateMap<PingReply, DNSModel>().ConvertUsing(Convert);
+            CreateMap<PingReply, NetworkConnection>().ConvertUsing(Convert);
         }
 
-        private DNSModel Convert(PingReply source, DNSModel destination, ResolutionContext context)
+        private NetworkConnection Convert(PingReply source, NetworkConnection destination, ResolutionContext context)
         {
-            destination = destination ?? new DNSModel();
+            destination = destination ?? new NetworkConnection();
             var hostEntry = Dns.GetHostEntry(source.Address);
             destination.HostName = hostEntry.HostName;
             destination.IP = source.Address.ToString();
-            destination.BaseIP = GetBaseIp(destination.IP);
             return destination;
-        }
-        private string GetBaseIp(string ip)
-        {
-            var baseIpEnd = ip.LastIndexOf('.');
-            return ip.Substring(0, baseIpEnd + 1);
         }
     }
 }
