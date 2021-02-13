@@ -10,6 +10,7 @@ using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Interfaces.Console;
 using USBTerminal.Modules.Console;
 using USBTerminal.Modules.Console.Views;
+using USBTerminal.Modules.SesameBot;
 using USBTerminal.Modules.USB;
 using USBTerminal.Modules.USB.ViewModels;
 using USBTerminal.Modules.Wifi;
@@ -76,6 +77,7 @@ namespace USBTerminal
             moduleCatalog.AddModule<ConsoleModule>();
             moduleCatalog.AddModule<USBModule>();
             moduleCatalog.AddModule<WifiModule>();
+            moduleCatalog.AddModule<SesameBotModule>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

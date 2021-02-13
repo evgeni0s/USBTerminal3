@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Services\USBTerminal.Services.Interfaces\USBTerminal.Services.Interfaces.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Core\USBTerminal.Core.csproj" />
+    <ProjectReference Include="..\..\USBTerminal.Modules.SesameBot\USBTerminal.Modules.SesameBot.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Modules.USB\USBTerminal.Modules.USB.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Modules.Wifi\USBTerminal.Modules.Wifi.csproj" />
     <ProjectReference Include="..\..\USBTerminal.Services\USBTerminal.Services.csproj" />

@@ -19,11 +19,9 @@ namespace USBTerminal.Modules.Console
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            var params1 = new NavigationParameters { { "Title", "Terminal" } };
-            _regionManager.RequestNavigate(RegionNames.LeftPanelRegion, nameof(ConsoleView), params1);
-
-            var params2 = new NavigationParameters { { "Title", "Application Logs" } };
-            _regionManager.RequestNavigate(RegionNames.RightPanelRegion, nameof(ConsoleView), params2);
+            // Since console is reusable but one instance is readonly, need to initialize it slightly differently
+            _regionManager.RequestNavigate(RegionNames.LeftPanelRegion, nameof(ConsoleView), NavigationArguments.TerminalParameters);
+            _regionManager.RequestNavigate(RegionNames.RightPanelRegion, nameof(ConsoleView), NavigationArguments.LogsParameters);
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

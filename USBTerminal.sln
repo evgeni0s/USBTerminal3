@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Simulator", "US
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Modules.Wifi", "USBTerminal.Modules.Wifi\USBTerminal.Modules.Wifi.csproj", "{10D7D86A-69B9-4C4E-8EC8-5F33398C21E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBTerminal.Services", "USBTerminal.Services\USBTerminal.Services.csproj", "{F5EC287D-5F49-49E8-B2AC-854C8DD294A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Services", "USBTerminal.Services\USBTerminal.Services.csproj", "{F5EC287D-5F49-49E8-B2AC-854C8DD294A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBTerminal.Modules.SesameBot", "USBTerminal.Modules.SesameBot\USBTerminal.Modules.SesameBot.csproj", "{8922DE9C-FD7E-4048-BB93-883752F4AA15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +117,14 @@ Global
 		{F5EC287D-5F49-49E8-B2AC-854C8DD294A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5EC287D-5F49-49E8-B2AC-854C8DD294A9}.Release|x86.ActiveCfg = Release|Any CPU
 		{F5EC287D-5F49-49E8-B2AC-854C8DD294A9}.Release|x86.Build.0 = Release|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Debug|x86.Build.0 = Debug|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Release|x86.ActiveCfg = Release|Any CPU
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +137,7 @@ Global
 		{C9D43942-7009-4FD8-9E39-C53F6FE5A7E3} = {B21E3C7E-9506-45BD-B6A9-456411C92512}
 		{10D7D86A-69B9-4C4E-8EC8-5F33398C21E8} = {8568E95C-52BD-49EC-A1BA-1E597DF43C59}
 		{F5EC287D-5F49-49E8-B2AC-854C8DD294A9} = {4BE29B90-9162-4848-92CD-F03E7CB0178C}
+		{8922DE9C-FD7E-4048-BB93-883752F4AA15} = {8568E95C-52BD-49EC-A1BA-1E597DF43C59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ED438BE9-4712-4ADE-997E-CEA6DDB390FB}

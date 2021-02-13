@@ -99,7 +99,14 @@
                     </controls:HamburgerMenuIconItem.Icon>
                 </controls:HamburgerMenuIconItem>
 
-            </controls:HamburgerMenuItemCollection>
+                    <controls:HamburgerMenuIconItem Label="Sesame Bot" Command="{Binding NavigateCommand}" 
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                    <controls:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconRPGAwesome Kind="RobotArm" />
+                    </controls:HamburgerMenuIconItem.Icon>
+                </controls:HamburgerMenuIconItem>
+                    
+                </controls:HamburgerMenuItemCollection>
         </controls:HamburgerMenu.ItemsSource>
         
         <!--  Options  -->
@@ -227,6 +234,13 @@
             <ContentControl Grid.Row="4"
                             Grid.ColumnSpan="99"
                             prism:RegionManager.RegionName="{x:Static core:RegionNames.BottomPanelRegion}" />
+        </Grid>
+        
+        <!--layer on top of Grid-->
+        <Grid Grid.Column="1">
+            <ContentControl 
+                            Panel.ZIndex="2"
+                            prism:RegionManager.RegionName="{x:Static core:RegionNames.MainRegion}" />
         </Grid>
     </Grid>
 </controls:MetroWindow>
