@@ -22,7 +22,6 @@ namespace USBTerminal.Modules.USB.ViewModels
     // ToDo: write tests
     public class USBPanelViewModel : RegionViewModelBase
     {
-        private readonly ILogger logger;
         // private DelegateCommand clearCommand;
         private readonly IApplicationCommands applicationCommands;
         private readonly IUSBService usbService;
@@ -40,7 +39,6 @@ namespace USBTerminal.Modules.USB.ViewModels
             IContainerProvider container)
             : base(regionManager, logger)
         {
-            this.logger = logger;
             this.applicationCommands = applicationCommands;
             this.usbService = usbService;
             this.eventAggregator = eventAggregator;
@@ -70,32 +68,32 @@ namespace USBTerminal.Modules.USB.ViewModels
         }
         private void OnPortClosed(SerialPortModel port)
         {
-            this.logger.Information($"Closed port: {port.PortName}");
+            Logger.Information($"Closed port: {port.PortName}");
             GetViewModel(port).IsOpen = port.IsOpen;
         }
 
         private void OnPortOpened(SerialPortModel port)
         {
-            this.logger.Information($"Opened port: {port.PortName}");
+            Logger.Information($"Opened port: {port.PortName}");
             GetViewModel(port).IsOpen = port.IsOpen;
         }
 
         private void RemovePort(string portName)
         {
-            this.logger.Information($"Removed port: {portName}");
+            Logger.Information($"Removed port: {portName}");
             var vmToRemove = AvailablePorts.FirstOrDefault(p => p.PortName == portName);
             AvailablePorts.Remove(vmToRemove);
         }
 
         private void AddPort(SerialPortModel port)
         {
-            this.logger.Information($"Added port: {port.PortName}");
+            Logger.Information($"Added port: {port.PortName}");
             AvailablePorts.Add(CreatePortViewModel(port));
         }
 
         private void OnPortError(SerialPortModel port)
         {
-            this.logger.Error($"Unexpected error. Closing port: {port.PortName}");
+            Logger.Error($"Unexpected error. Closing port: {port.PortName}");
             var vm = AvailablePorts.FirstOrDefault(p => p.PortName == port.PortName);
             vm.IsOpen = false;
         }

@@ -68,6 +68,7 @@
                 <Label Grid.Row="2" FontWeight="Bold">Host Name</Label>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding MachineInfo.HostName}"
                            Margin="0,5,0,0"></TextBlock>
+                <Button Grid.Row="2" Command="{Binding TestCmd}">cmd</Button>
             </Grid>
 
             <Label Grid.Row="1" 
@@ -113,6 +114,7 @@
                                             VerticalAlignment="Center"
                                             x:Name="WaitingStateButton"
                                             Visibility="{Binding ConnectionState, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=Waiting}"
+                                            Command="{Binding CloseConnectionCommand}"
                                             Style="{StaticResource WaitingButtonStyle}">
                                                 <Label FontSize="12"
                                                FontStyle="Oblique"

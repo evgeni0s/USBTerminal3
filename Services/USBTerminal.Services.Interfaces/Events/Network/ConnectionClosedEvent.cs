@@ -6,7 +6,7 @@ using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Services.Interfaces.Events.Network
 {
-    public class ConnectionEstablishedEvent : PubSubEvent<NetworkConnection>
+    public class ConnectionClosedEvent : PubSubEvent<NetworkConnection>
     {
     }
 }

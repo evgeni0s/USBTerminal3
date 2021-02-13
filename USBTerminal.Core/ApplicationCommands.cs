@@ -17,5 +17,6 @@ namespace USBTerminal.Core
         public CompositeCommand ScanNetworkCommand { get; } = new CompositeCommand();
         public CompositeCommand OpenNetworkConnectionCommand { get; } = new CompositeCommand();
         public CompositeCommand CloseNetworkConnectionCommand { get; } = new CompositeCommand();
+        public CompositeCommand SendMessageOnNetworkCommand { get; } = new CompositeCommand();
     }
 }

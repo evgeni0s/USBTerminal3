@@ -9,6 +9,7 @@ using System.Text;
 using USBTerminal.Core.Enums;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
+using USBTerminal.Services.Interfaces.Events.Network;
 using USBTerminal.Services.Interfaces.Models;
 using USBTerminal.Services.Interfaces.SocketConnection;
 
@@ -17,6 +18,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
     public class NetworkConnectionViewModel : ViewModelBase
     {
         private readonly ISocketServer socketServer;
+        private readonly IEventAggregator eventAggregator;
         private readonly IApplicationCommands applicationCommands;
         private DelegateCommand openConnectionCommand;
         private DelegateCommand closeConnectionCommand;
@@ -38,7 +40,6 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             this.mapper = mapper;
             
             this.ConnectionState = ButtonStates.Default;
-            //RaisePropertyChanged(nameof(ConnectionState));
         }
 
         public DelegateCommand OpenConnectionCommand
@@ -72,12 +73,20 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             applicationCommands.CloseNetworkConnectionCommand.Execute(dto);
         }
 
+        // Parent calls this method in case of connection error
+        public void CloseConnectionScilently()
+        {
+            ConnectionState = ButtonStates.Default;
+            RaisePropertyChanged(nameof(ConnectionState));
+        }
+
         public string ConnectionState
         {
             get { return connectionState; }
             set
             {
                 this.connectionState = value;
+                RaisePropertyChanged(nameof(ConnectionState));
                 SetProperty(ref connectionState, value);
             }
         }

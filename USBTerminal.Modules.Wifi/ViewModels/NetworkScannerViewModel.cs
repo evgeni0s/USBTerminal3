@@ -14,6 +14,7 @@ using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces;
 using USBTerminal.Services.Interfaces.Events;
+using USBTerminal.Services.Interfaces.Events.Network;
 using USBTerminal.Services.Interfaces.Models;
 using USBTerminal.Services.Interfaces.Network.Events;
 using USBTerminal.Services.Interfaces.SocketConnection;
@@ -25,6 +26,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
         private DelegateCommand scanNetworkCommand;
         private DelegateCommand saveCommand;
         private DelegateCommand clearCommand;
+        private DelegateCommand testCmd;
         private readonly IIPScanner ipScanner;
         private readonly IEventAggregator eventAggregator;
         private readonly IApplicationCommands applicationCommands;
@@ -58,11 +60,27 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             this.socketServer = socketServer;
             MachineInfo = ipScanner.GetCurrentMachineInfo();
             ExecuteScanNetworkCommand();
+            eventAggregator.GetEvent<NetworkErrorEvent>().Subscribe(OnNetworkError);
+            eventAggregator.GetEvent<ConnectionClosedEvent>().Subscribe(OnConnectionClosed);
         }
 
         public DelegateCommand ScanNetworkCommand
         {
             get { return scanNetworkCommand ?? (scanNetworkCommand = new DelegateCommand(ExecuteScanNetworkCommand)); }
+        }
+
+        public DelegateCommand TestCmd
+        {
+            get { return testCmd ?? (testCmd = new DelegateCommand(ExecuteTestCmd)); }
+        }
+
+        private void ExecuteTestCmd()
+        {
+            var connection = new NetworkConnection();
+            connection.Port = "34931";
+            connection.IP = "192.168.2.149";//"192.168.2.208";//MachineInfo.IP;
+            applicationCommands.SendMessageOnNetworkCommand.Execute(connection);
+
         }
 
         private void ExecuteScanNetworkCommand()
@@ -141,6 +159,19 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             // Need to set default value
             viewModel.Port = socketServer.GetDefaultPort();
             return viewModel;
+        }
+
+        private void OnNetworkError(NetworkConnection connection)
+        {
+            Logger.Error($"Unexpected error. Closing network connection: {connection.IP} : {connection.Port}");
+            var vm = NetworkConnections.FirstOrDefault(p => p.IP == connection.IP);
+            vm.CloseConnectionScilently();
+        }
+
+        private void OnConnectionClosed(NetworkConnection connection)
+        {
+            var vm = NetworkConnections.FirstOrDefault(p => p.IP == connection.IP);
+            vm.CloseConnectionScilently();
         }
     }
 }
