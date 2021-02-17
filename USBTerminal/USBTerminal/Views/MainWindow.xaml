@@ -101,11 +101,10 @@
 
                     <controls:HamburgerMenuIconItem Label="Sesame Bot" Command="{Binding NavigateCommand}" 
                                             CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
-                    <controls:HamburgerMenuIconItem.Icon>
+                        <controls:HamburgerMenuIconItem.Icon>
                             <iconPacks:PackIconRPGAwesome Kind="RobotArm" />
-                    </controls:HamburgerMenuIconItem.Icon>
-                </controls:HamburgerMenuIconItem>
-                    
+                        </controls:HamburgerMenuIconItem.Icon>
+                    </controls:HamburgerMenuIconItem>
                 </controls:HamburgerMenuItemCollection>
         </controls:HamburgerMenu.ItemsSource>
         

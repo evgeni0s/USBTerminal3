@@ -3,10 +3,74 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"      
              Background="White"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:core="clr-namespace:USBTerminal.Core;assembly=USBTerminal.Core" 
+             xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              prism:ViewModelLocator.AutoWireViewModel="True">
-    <Grid>
-        <TextBlock>
-            SesameBot panl
-        </TextBlock>
+    <Grid x:Name="SliderBar"  >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="50" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <RepeatButton Command="{Binding MoveLeftCommand}">
+            <Grid>
+                <Viewbox Margin="10,0,0,0" >
+                    <iconPacks:PackIconRemixIcon Kind="ArrowDropLeftLine" />
+                </Viewbox>
+                <Viewbox >
+                    <iconPacks:PackIconRemixIcon Kind="ArrowDropLeftLine" Foreground="Gold"/>
+                </Viewbox>
+            </Grid>
+        </RepeatButton>
+        <MediaElement Grid.Column="1" 
+                      x:Name="mediaPlayer" 
+                      Stretch="Fill" 
+                      LoadedBehavior="Play"
+                      Loaded="mediaPlayer_Loaded"
+                      MediaOpened="mediaPlayerMain_MediaOpened"
+                      Source="{Binding AnimationPath}"
+                      utils:MediaElementExtensions.MoviePosition="{Binding CurtainPosition}"
+                      utils:MediaElementExtensions.Duration="{Binding CurtainMovieDuration}"
+                     />
+        <!--<MediaElement Grid.Column="1" 
+                      Source="/USBTerminal.Core;component/Resources/CurtainAnimation.mp4" 
+                      x:Name="mediaPlayer" 
+                      Stretch="None" 
+                      LoadedBehavior="Play"
+                      Loaded="mediaPlayer_Loaded"
+                      MediaOpened="mediaPlayerMain_MediaOpened"
+                     />-->
+        <!--
+        
+
+        Position="{Binding MediaPlayerPosition}"
+        utils:MediaElementExtensions.MoviePosition="{Binding MediaPlayerPosition}"
+        -->
+        <RepeatButton Grid.Column="2" Command="{Binding MoveLeftCommand}">
+            <Grid>
+                <Viewbox Margin="0,0,10,0" >
+                    <iconPacks:PackIconRemixIcon Kind="ArrowDropRightLine" />
+                </Viewbox>
+                <Viewbox >
+                    <iconPacks:PackIconRemixIcon Kind="ArrowDropRightLine" Foreground="Gold"/>
+                </Viewbox>
+            </Grid>
+        </RepeatButton>
+
+        <Slider x:Name="slider" Value="{Binding CurrentProgress}" Grid.Row="1" Grid.Column="1" 
+                utils:SliderExtensions.DragCompletedCommand="{Binding SlideCompletedCommand}">
+            <!--<i:Interaction.Triggers>
+                <i:EventTrigger EventName="Thumb.DragCompleted">
+                    <i:InvokeCommandAction Command="{Binding Path=SliderValueChangedCommand, Mode=OneWay}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
+        </Slider>
     </Grid>
 </UserControl>

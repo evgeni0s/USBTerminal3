@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Interfaces.Console;
+using USBTerminal.Core.Utils;
 using USBTerminal.Modules.Console;
 using USBTerminal.Modules.Console.Views;
 using USBTerminal.Modules.SesameBot;
@@ -45,6 +46,7 @@ namespace USBTerminal
             containerRegistry.RegisterSingleton<IRunFactory, RunFactory>();
             containerRegistry.RegisterSingleton<ISocketServer, SocketServer>();
             containerRegistry.RegisterSingleton<IStateObject, StateObject>();
+            containerRegistry.RegisterSingleton<IAbsoluteResourcePathHelper, AbsoluteResourcePathHelper>();
             containerRegistry.Register<USBPortViewModel>();// childe vm
             containerRegistry.Register<NetworkConnectionViewModel>();// childe vm
             containerRegistry.Register<CustomRichTextBox>();
