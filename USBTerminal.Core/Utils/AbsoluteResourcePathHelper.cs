@@ -11,28 +11,23 @@ namespace USBTerminal.Core.Utils
     // provides absolute path for shared resources C:/...../Resources
     public class AbsoluteResourcePathHelper : IAbsoluteResourcePathHelper
     {
-        public Uri GetAbsolutePath(string fileName)
+        public string GetAbsolutePath(string fileName)
         {
-            var videoPath = Directory.GetCurrentDirectory();
-            var projectRootUri = GetNThParent(new Uri(videoPath), 5);
+            var currentDirectory = Directory.GetCurrentDirectory();
+            
+            var projectRootUri = GetNThParent(currentDirectory, 5);
             var absolutePath = Path.Combine(projectRootUri.ToString(), "USBTerminal.Core", "Resources", fileName);
-            return new Uri(absolutePath);
+            return absolutePath;
         }
 
-        private Uri GetNThParent(Uri uri, int levels)
+        private string GetNThParent(string path, int levels)
         {
-
-            Uri result = uri;
-            for (int i = 0; i < levels; i++)
+            DirectoryInfo directoryInfo = Directory.GetParent(path);
+            for (int i = 0; i < levels-1; i++)
             {
-                result = GetParentUriString(result);
+                directoryInfo = directoryInfo?.Parent;
             }
-            return result;
-        }
-
-        private Uri GetParentUriString(Uri uri)
-        {
-            return new Uri(uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length));
+            return directoryInfo?.FullName;
         }
     }
 }

@@ -29,31 +29,8 @@
                 </Viewbox>
             </Grid>
         </RepeatButton>
-        <MediaElement Grid.Column="1" 
-                      x:Name="mediaPlayer" 
-                      Stretch="Fill" 
-                      LoadedBehavior="Play"
-                      Loaded="mediaPlayer_Loaded"
-                      MediaOpened="mediaPlayerMain_MediaOpened"
-                      Source="{Binding AnimationPath}"
-                      utils:MediaElementExtensions.MoviePosition="{Binding CurtainPosition}"
-                      utils:MediaElementExtensions.Duration="{Binding CurtainMovieDuration}"
-                     />
-        <!--<MediaElement Grid.Column="1" 
-                      Source="/USBTerminal.Core;component/Resources/CurtainAnimation.mp4" 
-                      x:Name="mediaPlayer" 
-                      Stretch="None" 
-                      LoadedBehavior="Play"
-                      Loaded="mediaPlayer_Loaded"
-                      MediaOpened="mediaPlayerMain_MediaOpened"
-                     />-->
-        <!--
-        
-
-        Position="{Binding MediaPlayerPosition}"
-        utils:MediaElementExtensions.MoviePosition="{Binding MediaPlayerPosition}"
-        -->
-        <RepeatButton Grid.Column="2" Command="{Binding MoveLeftCommand}">
+        <Image Grid.Column="1" Source="{Binding CurtainFrame}"/>
+        <RepeatButton Grid.Column="2" Command="{Binding MoveRightCommand}">
             <Grid>
                 <Viewbox Margin="0,0,10,0" >
                     <iconPacks:PackIconRemixIcon Kind="ArrowDropRightLine" />
@@ -64,13 +41,11 @@
             </Grid>
         </RepeatButton>
 
-        <Slider x:Name="slider" Value="{Binding CurrentProgress}" Grid.Row="1" Grid.Column="1" 
+        <Slider x:Name="slider" Grid.Row="1" Grid.Column="1" 
+                Width="200"
+                Value="{Binding CurrentProgress, Mode=TwoWay}" 
+                Maximum="{Binding SliderMaximum}" 
                 utils:SliderExtensions.DragCompletedCommand="{Binding SlideCompletedCommand}">
-            <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="Thumb.DragCompleted">
-                    <i:InvokeCommandAction Command="{Binding Path=SliderValueChangedCommand, Mode=OneWay}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>-->
         </Slider>
     </Grid>
 </UserControl>

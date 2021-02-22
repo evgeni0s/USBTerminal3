@@ -4,6 +4,6 @@ namespace USBTerminal.Core.Interfaces
 {
     public interface IAbsoluteResourcePathHelper
     {
-        Uri GetAbsolutePath(string fileName);
+        string GetAbsolutePath(string fileName);
     }
 }

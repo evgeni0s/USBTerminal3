@@ -1,17 +1,18 @@
 ﻿using Prism.Commands;
 using Prism.Events;
-using Prism.Ioc;
-using Prism.Mvvm;
 using Prism.Regions;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
 
 namespace USBTerminal.Modules.SesameBot.ViewModels
 {
+    // System.Drawing.Image requires NuGet System.Drawing.Common
+    // Continue with createing good gif https://ezgif.com/maker/ezgif-6-2072aea0d43b-jpg. During creation select Frames. This will provide control over quality
     public class SesamePanelViewModel : RegionViewModelBase
     {
         private DelegateCommand moveLeftCommand;
@@ -19,12 +20,15 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private DelegateCommand slideCompletedCommand;
         private TimeSpan curtainPosition;
         private TimeSpan curtainMovieDuration;
-        private Uri animationPath;
-
+        private string animationPath;
         private readonly ILogger logger;
         private readonly IApplicationCommands applicationCommands;
         private readonly IEventAggregator eventAggregator;
         private double currentProgress;
+        private const double step = 1;
+        private ImageSource curtainFrame;
+        private GifBitmapDecoder decoder;
+        private int sliderMaximum;
 
         public SesamePanelViewModel(IRegionManager regionManager,
             ILogger logger,
@@ -36,7 +40,12 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             this.logger = logger;
             this.applicationCommands = applicationCommands;
             this.eventAggregator = eventAggregator;
-            AnimationPath = pathHelper.GetAbsolutePath("CurtainAnimation.mp4");
+            AnimationPath = pathHelper.GetAbsolutePath("CurtainAnimation.gif");
+
+
+            decoder = new GifBitmapDecoder(new Uri(AnimationPath), BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnLoad);
+            sliderMaximum = decoder.Frames.Count;
+            CurtainFrame = decoder.Frames[0]; // start with not empty control
         }
 
         public DelegateCommand MoveLeftCommand =>
@@ -44,9 +53,14 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
 
         private void ExecuteMoveLeftCommand()
         {
-            // var test = FromPercentage(20);
             logger.Information($"Move Left execute {CurrentProgress}");
+            CurrentProgress -= step;
+        }
 
+        public ImageSource CurtainFrame
+        {
+            get => curtainFrame;
+            set => SetProperty(ref curtainFrame, value);
         }
 
         public DelegateCommand MoveRightCommand =>
@@ -55,7 +69,17 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private void ExecuteMoveRightCommand()
         {
             logger.Information($"Move Right execute {CurrentProgress}");
-            //var test = FromPercentage(41.23);
+            CurrentProgress += step;
+        }
+
+        public static void SaveImageToFile(BitmapFrame image, string filePath)
+        {
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(image));
+                encoder.Save(fileStream);
+            }
         }
 
         public DelegateCommand SlideCompletedCommand =>
@@ -64,34 +88,13 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private void ExecuteSlideCompletedCommand()
         {
             logger.Information($"Slider moved {CurrentProgress}");
-            //var test = FromPercentage(41.23);
         }
 
-        private TimeSpan FromPercentage(double percentage)
-        {
-            var duration = CurtainMovieDuration.TotalMilliseconds;
-            var position = CurtainPosition.TotalMilliseconds;
-            var onePercent = duration / position;
-            var resultMs = onePercent * percentage;
-            return new TimeSpan((long)resultMs);
-        }
-
-        //private static TimeSpan GetVideoDuration(string filePath)
-        //{
-        //    using (var shell = ShellObject.FromParsingName(filePath))
-        //    {
-        //        IShellProperty prop = shell.Properties.System.Media.Duration;
-        //        var t = (ulong)prop.ValueAsObject;
-        //        return TimeSpan.FromTicks((long)t);
-        //    }
-        //}
-
-        public Uri AnimationPath
+        public string AnimationPath
         {
             get { return animationPath; }
             set { SetProperty(ref animationPath, value); }
         }
-
 
         public TimeSpan CurtainPosition
         {
@@ -108,8 +111,23 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         public double CurrentProgress
         {
             get { return currentProgress; }
-            set { SetProperty(ref currentProgress, value); }
+            set
+            {
+                if (value < SliderMaximum && value >= 0)
+                { 
+                    SetProperty(ref currentProgress, value);
+                    CurtainFrame = decoder.Frames[(int)value];
+                }
+            }
         }
 
+        public int SliderMaximum
+        {
+            get { return sliderMaximum; }
+            set
+            {
+                SetProperty(ref sliderMaximum, value);
+            }
+        }
     }
 }
