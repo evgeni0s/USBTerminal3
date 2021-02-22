@@ -24,6 +24,8 @@ using Prism.Ioc;
 using Prism.Events;
 using USBTerminal.Services.Interfaces.Events;
 using USBTerminal.Services.Interfaces.Models;
+using USBTerminal.Services.Interfaces.Models.Network;
+using USBTerminal.Services.Interfaces.Events.Network;
 
 namespace USBTerminal.Modules.Console.ViewModels
 {
@@ -137,12 +139,18 @@ namespace USBTerminal.Modules.Console.ViewModels
                 // Send recieve messages from usb
                 eventAggregator.GetEvent<TerminalInputEvent>().Subscribe(OnUserEnteredText);
                 eventAggregator.GetEvent<UsbMessageReceivedEvent>().Subscribe(OnReceivedResponseFromUsbDecive);
+                eventAggregator.GetEvent<NetworkMessageRecievedEvent>().Subscribe(OnReceivedResponseFromNetwork);
             }
         }
 
         private void OnReceivedResponseFromUsbDecive(SerialPortMessage response)
         {
             CustomRichTextBox.SetText(response.TextData, RunType.Blue);
+        }
+
+        private void OnReceivedResponseFromNetwork(NetworkMessage response)
+        {
+            CustomRichTextBox.SetText(response.Payload, RunType.Blue);
         }
 
         private void OnUserEnteredText(string userInput)

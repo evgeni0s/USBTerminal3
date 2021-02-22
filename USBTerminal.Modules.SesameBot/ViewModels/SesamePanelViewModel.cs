@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
+using USBTerminal.Services.Interfaces.SeasameConnection;
 
 namespace USBTerminal.Modules.SesameBot.ViewModels
 {
@@ -24,6 +25,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private readonly ILogger logger;
         private readonly IApplicationCommands applicationCommands;
         private readonly IEventAggregator eventAggregator;
+        private readonly ISeasameService seasameService;
         private double currentProgress;
         private const double step = 1;
         private ImageSource curtainFrame;
@@ -34,12 +36,14 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             ILogger logger,
             IApplicationCommands applicationCommands,
             IEventAggregator eventAggregator,
-            IAbsoluteResourcePathHelper pathHelper)
+            IAbsoluteResourcePathHelper pathHelper,
+            ISeasameService seasameService)
             : base(regionManager, logger)
         {
             this.logger = logger;
             this.applicationCommands = applicationCommands;
             this.eventAggregator = eventAggregator;
+            this.seasameService = seasameService;
             AnimationPath = pathHelper.GetAbsolutePath("CurtainAnimation.gif");
 
 
@@ -55,6 +59,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         {
             logger.Information($"Move Left execute {CurrentProgress}");
             CurrentProgress -= step;
+            seasameService.MoveLeft();
         }
 
         public ImageSource CurtainFrame
@@ -70,6 +75,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         {
             logger.Information($"Move Right execute {CurrentProgress}");
             CurrentProgress += step;
+            seasameService.MoveRight();
         }
 
         public static void SaveImageToFile(BitmapFrame image, string filePath)
@@ -87,7 +93,8 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
 
         private void ExecuteSlideCompletedCommand()
         {
-            logger.Information($"Slider moved {CurrentProgress}");
+            logger.Information($"Slider moved {CurrentProgress} / {GetPercentValue()} %");
+            seasameService.MoveTo(GetPercentValue());
         }
 
         public string AnimationPath
@@ -128,6 +135,11 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             {
                 SetProperty(ref sliderMaximum, value);
             }
+        }
+
+        private double GetPercentValue()
+        {
+           return CurrentProgress / sliderMaximum  * 100;
         }
     }
 }

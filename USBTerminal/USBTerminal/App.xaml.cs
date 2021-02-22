@@ -18,8 +18,10 @@ using USBTerminal.Modules.Wifi;
 using USBTerminal.Modules.Wifi.ViewModels;
 using USBTerminal.Services;
 using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Interfaces.SeasameConnection;
 using USBTerminal.Services.Interfaces.SocketConnection;
 using USBTerminal.Services.Profiles;
+using USBTerminal.Services.SeasameService;
 using USBTerminal.Services.SocketConnection;
 using USBTerminal.Views;
 using ApplicationCommands = USBTerminal.Core.ApplicationCommands;
@@ -47,6 +49,7 @@ namespace USBTerminal
             containerRegistry.RegisterSingleton<ISocketServer, SocketServer>();
             containerRegistry.RegisterSingleton<IStateObject, StateObject>();
             containerRegistry.RegisterSingleton<IAbsoluteResourcePathHelper, AbsoluteResourcePathHelper>();
+            containerRegistry.RegisterSingleton<ISeasameService, SeasameService>();
             containerRegistry.Register<USBPortViewModel>();// childe vm
             containerRegistry.Register<NetworkConnectionViewModel>();// childe vm
             containerRegistry.Register<CustomRichTextBox>();
