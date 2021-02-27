@@ -6,7 +6,7 @@ using USBTerminal.Services.Interfaces.Models;
 
 namespace USBTerminal.Services.Interfaces.Network.Events
 {
-    public class NetworkScanCompletedEvent: PubSubEvent<List<NetworkConnection>>
+    public class NetworkScanCompletedEvent: PubSubEvent<List<NetworkAddress>>
     {
     }
 }

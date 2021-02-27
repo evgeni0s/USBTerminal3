@@ -13,7 +13,7 @@ using USBTerminal.Services.Interfaces.SeasameConnection;
 namespace USBTerminal.Modules.SesameBot.ViewModels
 {
     // System.Drawing.Image requires NuGet System.Drawing.Common
-    // Continue with createing good gif https://ezgif.com/maker/ezgif-6-2072aea0d43b-jpg. During creation select Frames. This will provide control over quality
+    // gif can be created here https://ezgif.com/maker/ezgif-6-2072aea0d43b-jpg. During creation select Frames. This will provide control over quality
     public class SesamePanelViewModel : RegionViewModelBase
     {
         private DelegateCommand moveLeftCommand;
@@ -59,7 +59,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         {
             logger.Information($"Move Left execute {CurrentProgress}");
             CurrentProgress -= step;
-            seasameService.MoveLeft();
+            seasameService.MoveTo(CurrentProgress);
         }
 
         public ImageSource CurtainFrame
@@ -75,7 +75,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         {
             logger.Information($"Move Right execute {CurrentProgress}");
             CurrentProgress += step;
-            seasameService.MoveRight();
+            seasameService.MoveTo(CurrentProgress);
         }
 
         public static void SaveImageToFile(BitmapFrame image, string filePath)

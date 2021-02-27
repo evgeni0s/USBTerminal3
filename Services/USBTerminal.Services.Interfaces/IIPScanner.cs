@@ -7,7 +7,7 @@ namespace USBTerminal.Services.Interfaces
 {
     public interface IIPScanner
     {
-        NetworkConnection GetCurrentMachineInfo(); // What is my IP
+        NetworkAddress GetCurrentMachineInfo(); // What is my IP
         // To start scanning use Command. 
         // To get response listen to event.
     }

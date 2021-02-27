@@ -11,8 +11,8 @@ namespace USBTerminal.Modules.Wifi
     {
         public WifiModuleProfile()
         {
-            CreateMap<NetworkConnection, NetworkConnectionViewModel>();
-            CreateMap<NetworkConnectionViewModel, NetworkConnection>();
+            CreateMap<NetworkAddress, NetworkConnectionViewModel>();
+            CreateMap<NetworkConnectionViewModel, NetworkAddress>();
         }
     }
 }

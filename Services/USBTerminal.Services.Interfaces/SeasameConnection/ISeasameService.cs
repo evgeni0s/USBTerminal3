@@ -8,8 +8,8 @@ namespace USBTerminal.Services.Interfaces.SeasameConnection
 {
     public interface ISeasameService
     {
-        public void MoveLeft();
-        public void MoveRight();
+        //public void MoveLeft();
+        //public void MoveRight();
         public void MoveTo(double percent);
     }
 }

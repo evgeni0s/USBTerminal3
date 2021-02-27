@@ -4,7 +4,7 @@ using System.Text;
 
 namespace USBTerminal.Services.Interfaces.Models
 {
-    public class NetworkConnection
+    public record NetworkAddress
     {
         public string IP { get; set; }
 
@@ -14,5 +14,15 @@ namespace USBTerminal.Services.Interfaces.Models
         public string BaseIP { get; set; }
         public string HostName { get; set; }
         public string Port { get; set; }
+
+        //public bool AreEqual(NetworkAddress other)
+        //{
+        //    if (other == null)
+        //    {
+        //        return false;
+        //    }
+        //    return Port == other.Port
+        //        && IP == other.IP;
+        //}
     }
 }

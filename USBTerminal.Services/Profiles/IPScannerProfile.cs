@@ -12,12 +12,12 @@ namespace USBTerminal.Services.Profiles
     {
         public IPScannerProfile()
         {
-            CreateMap<PingReply, NetworkConnection>().ConvertUsing(Convert);
+            CreateMap<PingReply, NetworkAddress>().ConvertUsing(Convert);
         }
 
-        private NetworkConnection Convert(PingReply source, NetworkConnection destination, ResolutionContext context)
+        private NetworkAddress Convert(PingReply source, NetworkAddress destination, ResolutionContext context)
         {
-            destination = destination ?? new NetworkConnection();
+            destination = destination ?? new NetworkAddress();
             var hostEntry = Dns.GetHostEntry(source.Address);
             destination.HostName = hostEntry.HostName;
             destination.IP = source.Address.ToString();

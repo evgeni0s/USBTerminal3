@@ -9,9 +9,10 @@ namespace USBTerminal.Services.SocketConnection
     // Associate local socket with remote. 
     // System.Net.Sockets.Socket has LocalEndPoint and RemoteEndPoint, but  
     // from them I cant get IP
+    [Obsolete("Now using simple TCP instead of low level sockets")]
     public class SocketMap
     {
-        public NetworkConnection LocalSocket { get; set; }
+        public NetworkAddress LocalSocket { get; set; }
         public Socket SystemSocket { get; set; }
     }
 }

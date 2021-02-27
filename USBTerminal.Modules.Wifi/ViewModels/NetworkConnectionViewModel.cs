@@ -56,7 +56,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             }
             ConnectionState = ButtonStates.Waiting;
             RaisePropertyChanged(nameof(ConnectionState));
-            var dto = mapper.Map<NetworkConnection>(this);
+            var dto = mapper.Map<NetworkAddress>(this);
             applicationCommands.OpenNetworkConnectionCommand.Execute(dto);
         }
 
@@ -69,7 +69,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
         {
             ConnectionState = ButtonStates.Waiting;
             RaisePropertyChanged(nameof(ConnectionState));
-            var dto = mapper.Map<NetworkConnection>(this);
+            var dto = mapper.Map<NetworkAddress>(this);
             applicationCommands.CloseNetworkConnectionCommand.Execute(dto);
         }
 

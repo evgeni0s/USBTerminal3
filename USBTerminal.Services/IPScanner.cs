@@ -27,7 +27,7 @@ namespace USBTerminal.Services
         private readonly ILogger logger;
         private readonly IMapper mapper;
         private DelegateCommand<string> scanNetworkCommand;
-        private List<NetworkConnection> allDns = new List<NetworkConnection>();
+        private List<NetworkAddress> allDns = new List<NetworkAddress>();
 
         private CountdownEvent countdown = new CountdownEvent(1);
         private int upCount = 0;
@@ -53,7 +53,7 @@ namespace USBTerminal.Services
 
         private void ExecuteScanNetworkCommand(string baseIp)
         {
-            allDns = new List<NetworkConnection>();
+            allDns = new List<NetworkAddress>();
             PingAsync(GetIpRange(baseIp));
         }
 
@@ -77,7 +77,7 @@ namespace USBTerminal.Services
                         logger.Warning(ex.ToString());
                     }
                     logger.Information($"{ip} ({name}) is up: ({e.Reply.RoundtripTime} ms)");
-                    allDns.Add(new NetworkConnection { HostName = name, IP = GetBaseIp(ip) });
+                    allDns.Add(new NetworkAddress { HostName = name, IP = GetBaseIp(ip) });
                 }
                 else
                 {
@@ -103,14 +103,14 @@ namespace USBTerminal.Services
             var tasks = theListOfIPs.Select(ip => new Ping().SendPingAsync(ip, 2000));
             var results = await Task.WhenAll(tasks);
             var resultsList = results.Where(response => response.Status == IPStatus.Success)
-                .Select(response => mapper.Map<NetworkConnection>(response)).ToList();
+                .Select(response => mapper.Map<NetworkAddress>(response)).ToList();
 
             this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Publish(resultsList);
         }
 
-        public NetworkConnection GetCurrentMachineInfo()
+        public NetworkAddress GetCurrentMachineInfo()
         {
-            var dns = new NetworkConnection();
+            var dns = new NetworkAddress();
             var hostName = Dns.GetHostName();
             var host = Dns.GetHostEntry(hostName);
             var ip = host.AddressList.FirstOrDefault(address => address.AddressFamily == AddressFamily.InterNetwork).ToString();

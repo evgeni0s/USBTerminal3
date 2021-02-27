@@ -29,9 +29,9 @@ namespace USBTerminal.Services.SocketConnection
         private readonly IEventAggregator eventAggregator;
         private readonly IApplicationCommands commands;
         private readonly ILogger logger;
-        private List<SocketMap> sockets;
-        private DelegateCommand<NetworkConnection> connectOverNetworkCommand;
-        private DelegateCommand<NetworkConnection> closeConnectionCommand;
+        private List<TcpClientMap> clientsWithAddresses;
+        private DelegateCommand<NetworkAddress> connectOverNetworkCommand;
+        private DelegateCommand<NetworkAddress> closeConnectionCommand;
         private DelegateCommand<NetworkMessage> sendMessageOnNetworkCommand;
         // Thread signal.  
         public ManualResetEvent allDone = new ManualResetEvent(false);
@@ -50,19 +50,19 @@ namespace USBTerminal.Services.SocketConnection
             commands.CloseNetworkConnectionCommand.RegisterCommand(CloseConnectionCommand);
             commands.SendMessageOnNetworkCommand.RegisterCommand(SendMessageOnNetworkCommand);
 
-            sockets = new List<SocketMap>();
+            clientsWithAddresses = new List<TcpClientMap>();
            // activeServers = new List<SimpleTcpServer>();
         }
 
 
-        public DelegateCommand<NetworkConnection> ConnectOverNetworkCommand
+        public DelegateCommand<NetworkAddress> ConnectOverNetworkCommand
         {
-            get { return connectOverNetworkCommand ?? (connectOverNetworkCommand = new DelegateCommand<NetworkConnection>(ExecuteConnectOverNetworkCommand)); }
+            get { return connectOverNetworkCommand ?? (connectOverNetworkCommand = new DelegateCommand<NetworkAddress>(ExecuteConnectOverNetworkCommand)); }
         }
 
-        public DelegateCommand<NetworkConnection> CloseConnectionCommand
+        public DelegateCommand<NetworkAddress> CloseConnectionCommand
         {
-            get { return closeConnectionCommand ?? (closeConnectionCommand = new DelegateCommand<NetworkConnection>(ExecuteCloseConnectionCommand)); }
+            get { return closeConnectionCommand ?? (closeConnectionCommand = new DelegateCommand<NetworkAddress>(ExecuteCloseConnectionCommand)); }
         }
 
         public DelegateCommand<NetworkMessage> SendMessageOnNetworkCommand
@@ -70,40 +70,95 @@ namespace USBTerminal.Services.SocketConnection
             get { return sendMessageOnNetworkCommand ?? (sendMessageOnNetworkCommand = new DelegateCommand<NetworkMessage>(ExecuteSendMessageOnNetworkCommand)); }
         }
 
-        // Continue with: Client and server cant talk on the same port. One needs to call BeginConnect and the other beginAccept
-        private void ExecuteSendMessageOnNetworkCommand(NetworkMessage message)
+        public void ExecuteSendMessageOnNetworkCommand(NetworkMessage message)
         {
             // connection worked from laptop to PC when PC server has IP 192.168.2.208
             // connection worked from PC as client when PC server has IP 192.168.2.208
-            var client = new SimpleTcpClient().Connect(message.Address.IP, int.Parse(message.Address.Port));
-            var replyMsg = client.WriteLineAndGetReply(message.Payload, TimeSpan.FromSeconds(3));
+            //var client = new SimpleTcpClient().Connect(message.Address.IP, int.Parse(message.Address.Port));
+            //var replyMsg = client.WriteLineAndGetReply(message.Payload, TimeSpan.FromSeconds(3));
 
+            var kvp = clientsWithAddresses.FirstOrDefault(c => c.Address == message.Address);
+
+            //var replyMsg = kvp.Client.WriteLineAndGetReply(message.Payload, TimeSpan.FromSeconds(3)); // working, but slowly. Will wait for event
+            kvp.Client.WriteLine(message.Payload);
 
         }
 
-        private void OnConnected(IAsyncResult ar)
+        private void ExecuteCloseConnectionCommand(NetworkAddress address)
         {
-            
+            var map = clientsWithAddresses.FirstOrDefault(c => c.Address == address);
+            if (map == null)
+            {
+                logger.Error("Could not close connection, because it does not exist.");
+                return;
+            }
+            map.Client.DataReceived -= ClientDataReceived;
+            map.Client.Disconnect();
+            clientsWithAddresses.Remove(map);
+            eventAggregator.GetEvent<ConnectionClosedEvent>().Publish(address);
         }
 
-        private void ExecuteCloseConnectionCommand(NetworkConnection model)
+        private void ExecuteConnectOverNetworkCommand(NetworkAddress address)
         {
-        }
-
-        private void ExecuteConnectOverNetworkCommand(NetworkConnection model)
-        {
+            // DO NOT DELETE THIS
             // we can start server only on current IP, so it will be only 1
-            activeServer = new SimpleTcpServer().Start(IPAddress.Parse(model.IP), int.Parse(model.Port));
-            activeServer.Delimiter = 0x13;
-            activeServer.DelimiterDataReceived += (sender, msg) => {
-                msg.ReplyLine("You said: " + msg.MessageString);
-            };
-            
+            //activeServer = new SimpleTcpServer().Start(IPAddress.Parse(model.IP), int.Parse(model.Port));
+            //activeServer.Delimiter = 0x13;
+            //activeServer.DelimiterDataReceived += (sender, msg) => {
+            //    msg.ReplyLine("You said: " + msg.MessageString);
+            //};
+
 
             //var test1 = server.GetIPAddresses();
             //var test2 = server.GetListeningIPs(); // intrestingly this has 1 address out of box
 
             //activeServers.Add(server);
+            if (!clientsWithAddresses.Any(c => c.Address == address))
+            {
+                try
+                {
+                    var client = new SimpleTcpClient().Connect(address.IP, int.Parse(address.Port));
+                    var map = new TcpClientMap { Client = client, Address = address };
+                    client.DataReceived += ClientDataReceived;
+                    clientsWithAddresses.Add(map);
+                    eventAggregator.GetEvent<ConnectionSuccessEvent>().Publish(address);
+
+                }
+                catch (Exception e)
+                {
+                    var error = new ConnectionError
+                    {
+                        Address = address,
+                        ErrorMesage = $"{DiagnoseError(e)} e.Message + e.ToString()"
+                    };
+                    eventAggregator.GetEvent<NetworkErrorEvent>().Publish(error);
+                }
+            }
+        }
+
+        private string DiagnoseError(Exception e)
+        {
+            if (string.IsNullOrEmpty(e.Message))
+            {
+                return null;
+            }
+            if (e.Message.Contains("No connection could be made because the target machine actively refused it"))
+            {
+                return "It is likely that connection is made on the wrong port. Try changeing it";
+            }
+            return null;
+        }
+
+        private void ClientDataReceived(object sender, Message e)
+        {
+            var clientAddress = FindAddress(sender as SimpleTcpClient);
+            var message = new NetworkMessage() { Address = clientAddress, Payload = e.MessageString };
+            eventAggregator.GetEvent<NetworkMessageRecievedEvent>().Publish(message);
+        }
+
+        private NetworkAddress FindAddress(SimpleTcpClient client)
+        {
+            return clientsWithAddresses.FirstOrDefault(kvp => kvp.Client == client).Address;
         }
 
         public void AcceptCallback(IAsyncResult ar)
@@ -131,17 +186,9 @@ namespace USBTerminal.Services.SocketConnection
             return defaultPort;
         }
 
-        public Socket GetExistingOrCreateSocket(NetworkConnection model)
+        public List<NetworkAddress> GetActiveConnections()
         {
-            var map = sockets.FirstOrDefault(s => s.LocalSocket.IP == model.IP);
-            if (map == null)
-            {
-                map = new SocketMap();
-                map.LocalSocket = model;
-                map.SystemSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                sockets.Add(map);
-            }
-            return map.SystemSocket;
+            return clientsWithAddresses.Select(map => map.Address).ToList();
         }
     }
 }

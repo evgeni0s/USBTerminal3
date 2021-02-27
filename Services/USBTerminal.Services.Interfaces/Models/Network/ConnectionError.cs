@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace USBTerminal.Services.Interfaces.Models.Network
 {
-    public class NetworkMessage
+    public class ConnectionError
     {
+        public string ErrorMesage { get;
+            set; }
         public NetworkAddress Address { get; set; }
-        public string Payload { get; set; }
     }
 }

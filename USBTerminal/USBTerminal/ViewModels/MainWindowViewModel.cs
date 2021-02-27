@@ -65,6 +65,7 @@ namespace USBTerminal.ViewModels
                 case "Sesame Bot":
                     // regionManager.RequestNavigate(RegionNames.MainRegion, nameof(SesamePanel)); Works, but for debug puppose will enable console
 
+                    regionManager.RequestNavigate(RegionNames.LeftPanelRegion, nameof(ConsoleView), NavigationArguments.TerminalParameters);
                     regionManager.RequestNavigate(RegionNames.RightPanelRegion, nameof(ConsoleView), NavigationArguments.LogsParameters);
                     regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(SesamePanel));
 

@@ -16,6 +16,7 @@ using USBTerminal.Services.Interfaces;
 using USBTerminal.Services.Interfaces.Events;
 using USBTerminal.Services.Interfaces.Events.Network;
 using USBTerminal.Services.Interfaces.Models;
+using USBTerminal.Services.Interfaces.Models.Network;
 using USBTerminal.Services.Interfaces.Network.Events;
 using USBTerminal.Services.Interfaces.SocketConnection;
 
@@ -26,7 +27,6 @@ namespace USBTerminal.Modules.Wifi.ViewModels
         private DelegateCommand scanNetworkCommand;
         private DelegateCommand saveCommand;
         private DelegateCommand clearCommand;
-        private DelegateCommand testCmd;
         private readonly IIPScanner ipScanner;
         private readonly IEventAggregator eventAggregator;
         private readonly IApplicationCommands applicationCommands;
@@ -36,7 +36,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
         //private string ip;
         private string dnsScanningState;
         private List<NetworkConnectionViewModel> networkConnections;
-        private NetworkConnection machineInfo;
+        private NetworkAddress machineInfo;
         private string title = "Network Scanner";
         private string _connectionState;
 
@@ -61,26 +61,13 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             MachineInfo = ipScanner.GetCurrentMachineInfo();
             ExecuteScanNetworkCommand();
             eventAggregator.GetEvent<NetworkErrorEvent>().Subscribe(OnNetworkError);
+            eventAggregator.GetEvent<ConnectionSuccessEvent>().Subscribe(OnConnectionSuccess);
             eventAggregator.GetEvent<ConnectionClosedEvent>().Subscribe(OnConnectionClosed);
         }
 
         public DelegateCommand ScanNetworkCommand
         {
             get { return scanNetworkCommand ?? (scanNetworkCommand = new DelegateCommand(ExecuteScanNetworkCommand)); }
-        }
-
-        public DelegateCommand TestCmd
-        {
-            get { return testCmd ?? (testCmd = new DelegateCommand(ExecuteTestCmd)); }
-        }
-
-        private void ExecuteTestCmd()
-        {
-            var connection = new NetworkConnection();
-            connection.Port = "34931";
-            connection.IP = "192.168.2.149";//"192.168.2.208";//MachineInfo.IP;
-            applicationCommands.SendMessageOnNetworkCommand.Execute(connection);
-
         }
 
         private void ExecuteScanNetworkCommand()
@@ -91,7 +78,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             applicationCommands.ScanNetworkCommand.Execute(baseIp);
         }
 
-        public NetworkConnection MachineInfo
+        public NetworkAddress MachineInfo
         {
             get { return machineInfo; }
             set { SetProperty(ref machineInfo, value); }
@@ -135,7 +122,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             throw new NotImplementedException();
         }
 
-        private void OnNetworkScanCompleted(List<NetworkConnection> networkConnections)
+        private void OnNetworkScanCompleted(List<NetworkAddress> networkConnections)
         {
             NetworkConnections = networkConnections.Select(CreateViewModel).ToList();
            
@@ -148,7 +135,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             return ip.Substring(0, baseIpEnd + 1);
         }
 
-        private NetworkConnectionViewModel CreateViewModel(NetworkConnection connection)
+        private NetworkConnectionViewModel CreateViewModel(NetworkAddress connection)
         {
             var viewModel = container.Resolve<NetworkConnectionViewModel>();
 
@@ -161,15 +148,23 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             return viewModel;
         }
 
-        private void OnNetworkError(NetworkConnection connection)
+        private void OnConnectionSuccess(NetworkAddress address)
         {
-            Logger.Error($"Unexpected error. Closing network connection: {connection.IP} : {connection.Port}");
-            var vm = NetworkConnections.FirstOrDefault(p => p.IP == connection.IP);
+            Logger.Information($"Successfully connected to the server: {address.IP} : {address.Port}");
+            var vm = NetworkConnections.FirstOrDefault(p => p.IP == address.IP);
+            vm.ConnectionState = ButtonStates.Pressed;
+        }
+
+        private void OnNetworkError(ConnectionError connection)
+        {
+            Logger.Error($"Unexpected error. Closing network connection: {connection.Address.IP} : {connection.Address.Port}");
+            var vm = NetworkConnections.FirstOrDefault(p => p.IP == connection.Address.IP);
             vm.CloseConnectionScilently();
         }
 
-        private void OnConnectionClosed(NetworkConnection connection)
+        private void OnConnectionClosed(NetworkAddress connection)
         {
+            Logger.Information($"Disconnected from server.");
             var vm = NetworkConnections.FirstOrDefault(p => p.IP == connection.IP);
             vm.CloseConnectionScilently();
         }
