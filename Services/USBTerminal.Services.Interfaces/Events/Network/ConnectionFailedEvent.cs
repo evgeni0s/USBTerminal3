@@ -7,7 +7,7 @@ using USBTerminal.Services.Interfaces.Models.Network;
 
 namespace USBTerminal.Services.Interfaces.Events.Network
 {
-    public class NetworkErrorEvent : PubSubEvent<ConnectionError>
+    public class ConnectionFailedEvent : PubSubEvent<ConnectionError>
     {
     }
 }

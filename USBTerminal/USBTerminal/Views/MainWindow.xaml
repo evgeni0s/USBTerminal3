@@ -70,6 +70,7 @@
         -->
     <controls:HamburgerMenu x:Name="HamburgerMenuControl"
                                 IsPaneOpen="False"
+                                SelectedIndex="0"
                                 ItemTemplate="{StaticResource MenuItemTemplate}"
                                 OptionsItemTemplate="{StaticResource OptionsMenuItemTemplate}"
                                 HamburgerButtonClick="HamburgerMenuControl_HamburgerButtonClick" 
@@ -77,8 +78,15 @@
 
         <!--  Items  -->
         <controls:HamburgerMenu.ItemsSource>
-            <controls:HamburgerMenuItemCollection>
-                <controls:HamburgerMenuIconItem Label="USB Connection" Command="{Binding NavigateCommand}" 
+                <controls:HamburgerMenuItemCollection>
+                    <controls:HamburgerMenuIconItem Label="Sesame Bot" Command="{Binding NavigateCommand}" 
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                        <controls:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconRPGAwesome Kind="RobotArm" />
+                        </controls:HamburgerMenuIconItem.Icon>
+                    </controls:HamburgerMenuIconItem>
+                    
+                    <controls:HamburgerMenuIconItem Label="USB Connection" Command="{Binding NavigateCommand}" 
                                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
                     <controls:HamburgerMenuIconItem.Icon>
                         <iconPacks:PackIconForkAwesome Kind="Usb" />
@@ -98,13 +106,6 @@
                         <iconPacks:PackIconForkAwesome Kind="Cog" />
                     </controls:HamburgerMenuIconItem.Icon>
                 </controls:HamburgerMenuIconItem>
-
-                    <controls:HamburgerMenuIconItem Label="Sesame Bot" Command="{Binding NavigateCommand}" 
-                                            CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
-                        <controls:HamburgerMenuIconItem.Icon>
-                            <iconPacks:PackIconRPGAwesome Kind="RobotArm" />
-                        </controls:HamburgerMenuIconItem.Icon>
-                    </controls:HamburgerMenuIconItem>
                 </controls:HamburgerMenuItemCollection>
         </controls:HamburgerMenu.ItemsSource>
         

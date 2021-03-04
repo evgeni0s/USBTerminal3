@@ -18,7 +18,7 @@ namespace USBTerminal.Modules.USB
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            _regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(USBPanelView));
+            //_regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(USBPanelView));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

@@ -60,7 +60,7 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             this.socketServer = socketServer;
             MachineInfo = ipScanner.GetCurrentMachineInfo();
             ExecuteScanNetworkCommand();
-            eventAggregator.GetEvent<NetworkErrorEvent>().Subscribe(OnNetworkError);
+            eventAggregator.GetEvent<ConnectionFailedEvent>().Subscribe(OnNetworkError);
             eventAggregator.GetEvent<ConnectionSuccessEvent>().Subscribe(OnConnectionSuccess);
             eventAggregator.GetEvent<ConnectionClosedEvent>().Subscribe(OnConnectionClosed);
         }
@@ -168,5 +168,14 @@ namespace USBTerminal.Modules.Wifi.ViewModels
             var vm = NetworkConnections.FirstOrDefault(p => p.IP == connection.IP);
             vm.CloseConnectionScilently();
         }
+
+
+
+        //public override void OnNavigatedTo(NavigationContext navigationContext)
+        //{
+        //    var hostName = navigationContext.Parameters.GetValue<string>("HostName");
+        //    var port = navigationContext.Parameters.GetValue<string>("Port");
+
+        //}
     }
 }

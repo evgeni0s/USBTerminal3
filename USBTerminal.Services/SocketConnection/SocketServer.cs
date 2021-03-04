@@ -98,7 +98,7 @@ namespace USBTerminal.Services.SocketConnection
             eventAggregator.GetEvent<ConnectionClosedEvent>().Publish(address);
         }
 
-        private void ExecuteConnectOverNetworkCommand(NetworkAddress address)
+        public void ExecuteConnectOverNetworkCommand(NetworkAddress address)
         {
             // DO NOT DELETE THIS
             // we can start server only on current IP, so it will be only 1
@@ -131,7 +131,7 @@ namespace USBTerminal.Services.SocketConnection
                         Address = address,
                         ErrorMesage = $"{DiagnoseError(e)} e.Message + e.ToString()"
                     };
-                    eventAggregator.GetEvent<NetworkErrorEvent>().Publish(error);
+                    eventAggregator.GetEvent<ConnectionFailedEvent>().Publish(error);
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace USBTerminal.Services.SocketConnection
             }
             return null;
         }
-
+       // Continue with investigation why on laptop seasame screen does not open. Check path to animation. Try to debug there 
         private void ClientDataReceived(object sender, Message e)
         {
             var clientAddress = FindAddress(sender as SimpleTcpClient);

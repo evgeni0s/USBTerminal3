@@ -10,5 +10,8 @@ namespace USBTerminal.Services.Interfaces
         NetworkAddress GetCurrentMachineInfo(); // What is my IP
         // To start scanning use Command. 
         // To get response listen to event.
+        List<NetworkAddress> GetAllDns();
+
+       // void ScanNetwork();
     }
 }

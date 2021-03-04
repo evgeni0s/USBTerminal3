@@ -6,8 +6,13 @@ using System;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using USBTerminal.Core.Enums;
+using USBTerminal.Core.Enums.SesameBot;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
+using USBTerminal.Services.Interfaces.Events.Network;
+using USBTerminal.Services.Interfaces.Events.SeasameBot;
+using USBTerminal.Services.Interfaces.Models;
 using USBTerminal.Services.Interfaces.SeasameConnection;
 
 namespace USBTerminal.Modules.SesameBot.ViewModels
@@ -19,11 +24,12 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private DelegateCommand moveLeftCommand;
         private DelegateCommand moveRightCommand;
         private DelegateCommand slideCompletedCommand;
+        private DelegateCommand searchCommand;
+        private IApplicationCommands applicationCommands;
         private TimeSpan curtainPosition;
         private TimeSpan curtainMovieDuration;
         private string animationPath;
         private readonly ILogger logger;
-        private readonly IApplicationCommands applicationCommands;
         private readonly IEventAggregator eventAggregator;
         private readonly ISeasameService seasameService;
         private double currentProgress;
@@ -31,6 +37,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private ImageSource curtainFrame;
         private GifBitmapDecoder decoder;
         private int sliderMaximum;
+        private string connectionState;
 
         public SesamePanelViewModel(IRegionManager regionManager,
             ILogger logger,
@@ -50,6 +57,36 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             decoder = new GifBitmapDecoder(new Uri(AnimationPath), BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnLoad);
             sliderMaximum = decoder.Frames.Count;
             CurtainFrame = decoder.Frames[0]; // start with not empty control
+            this.eventAggregator.GetEvent<BotNotFoundEvent>().Subscribe(OnNotFound);
+            this.eventAggregator.GetEvent<BotConnectionFailedEvent>().Subscribe(OnConnectionFailed);
+            this.eventAggregator.GetEvent<BotConnectionSuccessEvent>().Subscribe(OnConnectionSuccess);
+
+            ExecuteSearchCommand();
+        }
+
+        private void OnConnectionSuccess(NetworkAddress address)
+        {
+            ConnectionState = ConnectionStatuses.Connected;
+            RaisePropertyChanged(nameof(ConnectionState));
+        }
+
+        private void OnConnectionFailed(NetworkAddress address)
+        {
+            ConnectionState = ConnectionStatuses.Disconnected;
+            RaisePropertyChanged(nameof(ConnectionState));
+        }
+
+        private void OnNotFound()
+        {
+            ConnectionState = ConnectionStatuses.Disconnected;
+            RaisePropertyChanged(nameof(ConnectionState));
+        }
+
+        public DelegateCommand SearchCommand => searchCommand ?? (searchCommand = new DelegateCommand(ExecuteSearchCommand));
+        private void ExecuteSearchCommand()
+        {
+            ConnectionState = ConnectionStatuses.Search;
+            applicationCommands.SearchSeasameBotsOnNetworkCommand.Execute(null);
         }
 
         public DelegateCommand MoveLeftCommand =>
@@ -134,6 +171,17 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             set
             {
                 SetProperty(ref sliderMaximum, value);
+            }
+        }
+
+        public string ConnectionState
+        {
+            get { return connectionState; }
+            set
+            {
+                this.connectionState = value;
+               // RaisePropertyChanged(nameof(ConnectionState));
+                SetProperty(ref connectionState, value);
             }
         }
 

@@ -24,5 +24,9 @@ namespace USBTerminal.Core.Interfaces
         CompositeCommand SendMessageOnNetworkCommand { get; }
 
         #endregion
+
+        #region Seasame
+        CompositeCommand SearchSeasameBotsOnNetworkCommand { get; }
+        #endregion
     }
 }

@@ -2,6 +2,7 @@
 using Prism.Modularity;
 using Prism.Regions;
 using System;
+using USBTerminal.Core;
 using USBTerminal.Modules.SesameBot.Views;
 
 namespace USBTerminal.Modules.SesameBot
@@ -17,7 +18,9 @@ namespace USBTerminal.Modules.SesameBot
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            //throw new NotImplementedException();
+            //_regionManager.RequestNavigate(RegionNames.LeftPanelRegion, nameof(ConsoleView), NavigationArguments.TerminalParameters);
+            //_regionManager.RequestNavigate(RegionNames.RightPanelRegion, nameof(ConsoleView), NavigationArguments.LogsParameters);
+            _regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(SesamePanel));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

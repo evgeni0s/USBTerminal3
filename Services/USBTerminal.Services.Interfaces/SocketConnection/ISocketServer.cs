@@ -10,5 +10,6 @@ namespace USBTerminal.Services.Interfaces.SocketConnection
     {
         string GetDefaultPort();
         List<NetworkAddress> GetActiveConnections();
+        void ExecuteConnectOverNetworkCommand(NetworkAddress address);
     }
 }

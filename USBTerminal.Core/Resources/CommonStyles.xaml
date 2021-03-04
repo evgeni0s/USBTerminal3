@@ -13,6 +13,7 @@
 
     <utils:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
     <utils:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter"/>
+    <utils:ValueToBoolConverter x:Key="ValueToBoolConverter"/>
 
     <DataTemplate x:Key="legendTemplate" >
         <Grid HorizontalAlignment="Stretch">

@@ -95,6 +95,12 @@ namespace USBTerminal.Services
             countdown.Signal();
         }
 
+
+        //public void ScanNetwork()
+        //{
+            
+        //}
+
         private IEnumerable<string> GetIpRange(string baseIp)
             => Enumerable.Range(1, 255).Select(ipSegment => baseIp + ipSegment);
 
@@ -102,10 +108,28 @@ namespace USBTerminal.Services
         {
             var tasks = theListOfIPs.Select(ip => new Ping().SendPingAsync(ip, 2000));
             var results = await Task.WhenAll(tasks);
-            var resultsList = results.Where(response => response.Status == IPStatus.Success)
-                .Select(response => mapper.Map<NetworkAddress>(response)).ToList();
+            var pingReply = results.Where(response => response.Status == IPStatus.Success);
+            var resultsList = await Task.WhenAll(pingReply.Select(response => Convert(response)));
+            allDns = resultsList.ToList();
+            this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Publish(allDns);
+        }
 
-            this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Publish(resultsList);
+        private async Task<NetworkAddress> Convert(PingReply source)
+        {
+            var destination = new NetworkAddress();
+            IPHostEntry hostEntry = null;
+            try
+            {
+                hostEntry = await Dns.GetHostEntryAsync(source.Address);
+            }
+            catch (SocketException ex)
+            {
+                //not every IP has a name
+            }
+
+            destination.HostName = hostEntry?.HostName ?? "unknown";
+            destination.IP = source.Address.ToString();
+            return destination;
         }
 
         public NetworkAddress GetCurrentMachineInfo()
@@ -125,5 +149,11 @@ namespace USBTerminal.Services
             var baseIpEnd = ip.LastIndexOf('.');
             return ip.Substring(0, baseIpEnd + 1);
         }
+
+        public List<NetworkAddress> GetAllDns()
+        {
+            return allDns;
+        }
+
     }
 }

@@ -40,6 +40,7 @@ namespace USBTerminal.ViewModels
             this.dialogService = dialogService;
             this.applicationCommands = applicationCommands;
             this.eventAggregator = eventAggregator;
+            //ExecuteNavigateCommand("Sesame Bot");
         }
 
         public DelegateCommand<string> NavigateCommand =>
