@@ -137,7 +137,6 @@ namespace USBTerminal.Modules.Console.ViewModels
             {
                 // Terminal window
                 // Send recieve messages from usb
-                eventAggregator.GetEvent<TerminalInputEvent>().Subscribe(OnUserEnteredText);
                 eventAggregator.GetEvent<UsbMessageReceivedEvent>().Subscribe(OnReceivedResponseFromUsbDecive);
                 eventAggregator.GetEvent<NetworkMessageRecievedEvent>().Subscribe(OnReceivedResponseFromNetwork);
             }
@@ -151,12 +150,6 @@ namespace USBTerminal.Modules.Console.ViewModels
         private void OnReceivedResponseFromNetwork(NetworkMessage response)
         {
             CustomRichTextBox.SetText(response.Payload, RunType.Blue);
-        }
-
-        private void OnUserEnteredText(string userInput)
-        {
-            var message = new SerialPortMessage { TextData = userInput };
-            applicationCommands.SendMessageToPortCommand.Execute(message);
         }
 
         public RunType LevelToRunType(LogEventLevel logEvent)

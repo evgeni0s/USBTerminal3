@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Services.Interfaces;
+using USBTerminal.Services.Interfaces.Events;
 using USBTerminal.Services.Interfaces.Events.Network;
 using USBTerminal.Services.Interfaces.Events.SeasameBot;
 using USBTerminal.Services.Interfaces.Models;
@@ -50,7 +51,19 @@ namespace USBTerminal.Services.SeasameService
             //activeConnections.
             this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Subscribe(OnNetworkScanCompleted);
             this.eventAggregator.GetEvent<ConnectionSuccessEvent>().Subscribe(OnConnectionSuccessEvent);
-            this.eventAggregator.GetEvent<ConnectionFailedEvent>().Subscribe(OnConnectionFailedEvent);
+            this.eventAggregator.GetEvent<ConnectionFailedEvent>().Subscribe(OnConnectionFailedEvent); 
+            eventAggregator.GetEvent<TerminalInputEvent>().Subscribe(OnTerminalInput);
+        }
+
+        private void OnTerminalInput(string cmd)
+        {
+            var message = new NetworkMessage
+            {
+                Address = botAddress,
+                Payload = cmd
+            };
+
+            commands.SendMessageOnNetworkCommand.Execute(message);
         }
 
         private void OnConnectionFailedEvent(ConnectionError args)
