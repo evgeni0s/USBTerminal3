@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Services.Interfaces;
 using USBTerminal.Services.Interfaces.Events;
@@ -51,9 +52,34 @@ namespace USBTerminal.Services.SeasameService
             //activeConnections.
             this.eventAggregator.GetEvent<NetworkScanCompletedEvent>().Subscribe(OnNetworkScanCompleted);
             this.eventAggregator.GetEvent<ConnectionSuccessEvent>().Subscribe(OnConnectionSuccessEvent);
-            this.eventAggregator.GetEvent<ConnectionFailedEvent>().Subscribe(OnConnectionFailedEvent); 
+            this.eventAggregator.GetEvent<ConnectionFailedEvent>().Subscribe(OnConnectionFailedEvent);
+            this.eventAggregator.GetEvent<DeviceDisconnectedEvent>().Subscribe(OnDeviceDisconnectedEvent);
             eventAggregator.GetEvent<TerminalInputEvent>().Subscribe(OnTerminalInput);
+            Timer aTimer = new Timer();
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Interval = 3000;
+            aTimer.Enabled = true;
         }
+
+        private void OnTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            if (botAddress != null)
+            {
+                ipScanner.IsAlive(botAddress.IP);
+            }
+        }
+
+        private void OnDeviceDisconnectedEvent(string ip)
+        {
+            if (botAddress != null && botAddress.IP == ip)
+            {
+                logger.Information($"{botAddress.HostName} disconnected.");
+                this.eventAggregator.GetEvent<BotConnectionFailedEvent>().Publish(botAddress);
+                this.socketServer.ExecuteCloseConnectionCommand(botAddress);
+                botAddress = null;
+            }
+        }
+
 
         private void OnTerminalInput(string cmd)
         {
@@ -92,13 +118,21 @@ namespace USBTerminal.Services.SeasameService
             {
                 logger.Error("No Seasame Bots were found");
                 this.eventAggregator.GetEvent<BotNotFoundEvent>().Publish();
+                return;
             }
-            if (bots.Count() == 1)
+
+            var bot = bots.First();
+            if (!isRegistered(bot))
             {
-                var bot = bots.First();
                 bot.Port = defaultPort;
+                logger.Information("Found new Seasame Bot.");
                 socketServer.ExecuteConnectOverNetworkCommand(bot);
             }
+        }
+
+        private bool isRegistered(NetworkAddress address)
+        {
+            return botAddress != null && address.IP == botAddress.IP;
         }
 
         private static bool SeasameBotFilter(NetworkAddress dns)
@@ -144,16 +178,30 @@ namespace USBTerminal.Services.SeasameService
                 logger.Error("Move command failed. No devices are online.");
                 return;
             }
-            //foreach (var connection in activeConnections)
-            //{
-                var message = new NetworkMessage
-                {
-                    Address = botAddress,
-                    Payload = $"Move {percent}%"
-                };
+            var message = new NetworkMessage
+            {
+                Address = botAddress,
+                Payload = $"Move {percent}%"
+            };
 
-                commands.SendMessageOnNetworkCommand.Execute(message);
-            //}
+            commands.SendMessageOnNetworkCommand.Execute(message);
+        }
+
+        public void GetWiFiInfo()
+        {
+            var activeConnections = socketServer.GetActiveConnections().Where(SeasameBotFilter);
+            if (!activeConnections.Any())
+            {
+                logger.Error("Move command failed. No devices are online.");
+                return;
+            }
+            var message = new NetworkMessage
+            {
+                Address = botAddress,
+                Payload = $"status"
+            };
+
+            commands.SendMessageOnNetworkCommand.Execute(message);
         }
     }
 }

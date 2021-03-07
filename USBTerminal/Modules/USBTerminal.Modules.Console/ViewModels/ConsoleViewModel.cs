@@ -139,17 +139,23 @@ namespace USBTerminal.Modules.Console.ViewModels
                 // Send recieve messages from usb
                 eventAggregator.GetEvent<UsbMessageReceivedEvent>().Subscribe(OnReceivedResponseFromUsbDecive);
                 eventAggregator.GetEvent<NetworkMessageRecievedEvent>().Subscribe(OnReceivedResponseFromNetwork);
+                eventAggregator.GetEvent<NetworkMessageSentEvent>().Subscribe(OnNetworkMessageSentEvent);
             }
+        }
+
+        private void OnNetworkMessageSentEvent(NetworkMessage message)
+        {
+            CustomRichTextBox.SetText($"pc >> {message.Payload}", RunType.Yellow);
         }
 
         private void OnReceivedResponseFromUsbDecive(SerialPortMessage response)
         {
-            CustomRichTextBox.SetText(response.TextData, RunType.Blue);
+            CustomRichTextBox.SetText($"device >> {response.TextData}", RunType.Blue);
         }
 
         private void OnReceivedResponseFromNetwork(NetworkMessage response)
         {
-            CustomRichTextBox.SetText(response.Payload, RunType.Blue);
+            CustomRichTextBox.SetText($"device >> {response.Payload}", RunType.Blue);
         }
 
         public RunType LevelToRunType(LogEventLevel logEvent)

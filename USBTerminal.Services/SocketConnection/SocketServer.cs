@@ -77,14 +77,17 @@ namespace USBTerminal.Services.SocketConnection
             //var client = new SimpleTcpClient().Connect(message.Address.IP, int.Parse(message.Address.Port));
             //var replyMsg = client.WriteLineAndGetReply(message.Payload, TimeSpan.FromSeconds(3));
 
+            //commands.LoggingCommand.Execute()
+
             var kvp = clientsWithAddresses.FirstOrDefault(c => c.Address == message.Address);
 
             //var replyMsg = kvp.Client.WriteLineAndGetReply(message.Payload, TimeSpan.FromSeconds(3)); // working, but slowly. Will wait for event
             kvp.Client.WriteLine(message.Payload);
 
+            eventAggregator.GetEvent<NetworkMessageSentEvent>().Publish(message);
         }
 
-        private void ExecuteCloseConnectionCommand(NetworkAddress address)
+        public void ExecuteCloseConnectionCommand(NetworkAddress address)
         {
             var map = clientsWithAddresses.FirstOrDefault(c => c.Address == address);
             if (map == null)
@@ -133,6 +136,16 @@ namespace USBTerminal.Services.SocketConnection
                     };
                     eventAggregator.GetEvent<ConnectionFailedEvent>().Publish(error);
                 }
+            }
+            else
+            {
+                var error = new ConnectionError
+                {
+                    Address = address,
+                    ErrorMesage = $"Already connected to this device"
+                };
+
+                eventAggregator.GetEvent<ConnectionFailedEvent>().Publish(error);
             }
         }
 

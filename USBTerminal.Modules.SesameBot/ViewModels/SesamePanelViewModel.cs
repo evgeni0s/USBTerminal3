@@ -60,14 +60,22 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             this.eventAggregator.GetEvent<BotNotFoundEvent>().Subscribe(OnNotFound);
             this.eventAggregator.GetEvent<BotConnectionFailedEvent>().Subscribe(OnConnectionFailed);
             this.eventAggregator.GetEvent<BotConnectionSuccessEvent>().Subscribe(OnConnectionSuccess);
+            this.eventAggregator.GetEvent<BotDisconnectedEvent>().Subscribe(OnDisconnected);
 
             ExecuteSearchCommand();
+        }
+
+        private void OnDisconnected(NetworkAddress address)
+        {
+            ConnectionState = ConnectionStatuses.Disconnected;
+            RaisePropertyChanged(nameof(ConnectionState));
         }
 
         private void OnConnectionSuccess(NetworkAddress address)
         {
             ConnectionState = ConnectionStatuses.Connected;
             RaisePropertyChanged(nameof(ConnectionState));
+            seasameService.GetWiFiInfo();
         }
 
         private void OnConnectionFailed(NetworkAddress address)

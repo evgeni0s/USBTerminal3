@@ -11,7 +11,7 @@ namespace USBTerminal.Services.Interfaces
         // To start scanning use Command. 
         // To get response listen to event.
         List<NetworkAddress> GetAllDns();
-
+        void IsAlive(string ip);
        // void ScanNetwork();
     }
 }

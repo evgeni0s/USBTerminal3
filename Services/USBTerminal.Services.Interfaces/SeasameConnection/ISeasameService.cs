@@ -11,5 +11,6 @@ namespace USBTerminal.Services.Interfaces.SeasameConnection
         //public void MoveLeft();
         //public void MoveRight();
         public void MoveTo(double percent);
+        public void GetWiFiInfo();
     }
 }

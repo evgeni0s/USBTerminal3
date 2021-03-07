@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Services.Interfaces;
 using USBTerminal.Services.Interfaces.Events;
+using USBTerminal.Services.Interfaces.Events.Network;
 using USBTerminal.Services.Interfaces.Models;
 using USBTerminal.Services.Interfaces.Network.Events;
 
@@ -57,43 +58,43 @@ namespace USBTerminal.Services
             PingAsync(GetIpRange(baseIp));
         }
 
-        private void PingCompleted(object sender, PingCompletedEventArgs e)
-        {
-            var ip = (string)e.UserState;
-            if (e.Reply != null && e.Reply.Status == IPStatus.Success)
-            {
-                if (resolveNames)
-                {
-                    string name;
-                    try
-                    {
-                        IPHostEntry hostEntry = Dns.GetHostEntry(ip);
-                        name = hostEntry.HostName;
-                    }
-                    catch (SocketException ex)
-                    {
-                        name = "?";
-                        logger.Error($"Socket exception at {ip}");
-                        logger.Warning(ex.ToString());
-                    }
-                    logger.Information($"{ip} ({name}) is up: ({e.Reply.RoundtripTime} ms)");
-                    allDns.Add(new NetworkAddress { HostName = name, IP = GetBaseIp(ip) });
-                }
-                else
-                {
-                    logger.Information($"{ip} is up: ({e.Reply.RoundtripTime} ms)");
-                }
-                lock (lockObj)
-                {
-                    upCount++;
-                }
-            }
-            else if (e.Reply == null)
-            {
-                logger.Information("Pinging {0} failed. (Null Reply object?)", ip);
-            }
-            countdown.Signal();
-        }
+        //private void PingCompleted(object sender, PingCompletedEventArgs e)
+        //{
+        //    var ip = (string)e.UserState;
+        //    if (e.Reply != null && e.Reply.Status == IPStatus.Success)
+        //    {
+        //        if (resolveNames)
+        //        {
+        //            string name;
+        //            try
+        //            {
+        //                IPHostEntry hostEntry = Dns.GetHostEntry(ip);
+        //                name = hostEntry.HostName;
+        //            }
+        //            catch (SocketException ex)
+        //            {
+        //                name = "?";
+        //                logger.Error($"Socket exception at {ip}");
+        //                logger.Warning(ex.ToString());
+        //            }
+        //            logger.Information($"{ip} ({name}) is up: ({e.Reply.RoundtripTime} ms)");
+        //            allDns.Add(new NetworkAddress { HostName = name, IP = GetBaseIp(ip) });
+        //        }
+        //        else
+        //        {
+        //            logger.Information($"{ip} is up: ({e.Reply.RoundtripTime} ms)");
+        //        }
+        //        lock (lockObj)
+        //        {
+        //            upCount++;
+        //        }
+        //    }
+        //    else if (e.Reply == null)
+        //    {
+        //        logger.Information("Pinging {0} failed. (Null Reply object?)", ip);
+        //    }
+        //    countdown.Signal();
+        //}
 
 
         //public void ScanNetwork()
@@ -130,6 +131,16 @@ namespace USBTerminal.Services
             destination.HostName = hostEntry?.HostName ?? "unknown";
             destination.IP = source.Address.ToString();
             return destination;
+        }
+
+        public async void IsAlive(string ip)
+        {
+            var tasks = new Ping().SendPingAsync(ip, 2000);
+            var results = await tasks;
+            if (results.Status != IPStatus.Success)
+            {
+                this.eventAggregator.GetEvent<DeviceDisconnectedEvent>().Publish(ip);
+            }
         }
 
         public NetworkAddress GetCurrentMachineInfo()
