@@ -30,6 +30,11 @@ namespace USBTerminal.Services.SeasameService
         private readonly IUSBService usbService;
         private const string defaultHostName = "SeasameBot";
         private const string defaultPort = "23";
+        private string[] moveDirections = new[] { "Forward", "Backward" };
+        private string[] stepperMoveTypes = new[] { "Single", "Double", "Interleave", "Microstep" };
+        private string defaultSteps = "200";
+        private string defaultSpeed = "10";
+
         private DelegateCommand searchBotsCommand;
         private NetworkAddress botAddress;
 
