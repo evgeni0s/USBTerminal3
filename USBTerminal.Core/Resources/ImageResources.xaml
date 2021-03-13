@@ -4,4 +4,5 @@
     <BitmapImage x:Key="Notepad_icon" UriSource="/Resources/Notepad_icon.png" />
     <BitmapImage x:Key="excel-icon" UriSource="/Resources/excel-icon.png" />
     <BitmapImage x:Key="clean_brush" UriSource="/Resources/clean_brush-512.png" />
+    <BitmapImage x:Key="device_icon" UriSource="/Resources/Device.png" />
 </ResourceDictionary>

@@ -26,6 +26,7 @@ namespace USBTerminal.Modules.SesameBot
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<SesamePanel>();
+            containerRegistry.RegisterForNavigation<BotDesigner>();
         }
     }
 }

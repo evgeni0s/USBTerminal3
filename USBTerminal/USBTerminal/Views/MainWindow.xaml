@@ -1,4 +1,4 @@
-﻿<controls:MetroWindow x:Class="USBTerminal.Views.MainWindow"
+<controls:MetroWindow x:Class="USBTerminal.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
@@ -85,19 +85,27 @@
                             <iconPacks:PackIconRPGAwesome Kind="RobotArm" />
                         </controls:HamburgerMenuIconItem.Icon>
                     </controls:HamburgerMenuIconItem>
-                    
-                    <controls:HamburgerMenuIconItem Label="USB Connection" Command="{Binding NavigateCommand}" 
+
+                    <controls:HamburgerMenuIconItem Label="Bot Designer" Command="{Binding NavigateCommand}" 
                                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
-                    <controls:HamburgerMenuIconItem.Icon>
-                        <iconPacks:PackIconForkAwesome Kind="Usb" />
-                    </controls:HamburgerMenuIconItem.Icon>
-                </controls:HamburgerMenuIconItem>
+                        <controls:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconVaadinIcons Kind="Compile" />
+                        </controls:HamburgerMenuIconItem.Icon>
+                    </controls:HamburgerMenuIconItem>
 
                 <controls:HamburgerMenuIconItem Label="Network Connection" Command="{Binding NavigateCommand}" 
                                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
                         <controls:HamburgerMenuIconItem.Icon>
-                            <iconPacks:PackIconModern Kind="NetworkHome" />
+                            <iconPacks:PackIconForkAwesome Kind="Wifi" />
                         </controls:HamburgerMenuIconItem.Icon>
+                </controls:HamburgerMenuIconItem>
+
+
+                <controls:HamburgerMenuIconItem Label="USB Connection" Command="{Binding NavigateCommand}" 
+                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                    <controls:HamburgerMenuIconItem.Icon>
+                        <iconPacks:PackIconForkAwesome Kind="Usb" />
+                    </controls:HamburgerMenuIconItem.Icon>
                 </controls:HamburgerMenuIconItem>
 
                 <controls:HamburgerMenuIconItem Label="Settings" Command="{Binding NavigateCommand}" 

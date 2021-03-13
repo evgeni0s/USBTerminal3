@@ -12,6 +12,7 @@
     <None Remove="Resources\Close.png" />
     <None Remove="Resources\Delete_Icon.png" />
     <None Remove="Resources\Delete_Icon_small.png" />
+    <None Remove="Resources\Device.png" />
     <None Remove="Resources\Electronic_circuit.jpg" />
     <None Remove="Resources\excel-icon.png" />
     <None Remove="Resources\Gitar-mobile-app-icons.jpg" />
@@ -22,13 +23,19 @@
     <None Remove="Resources\Metal_plate520.jpg" />
     <None Remove="Resources\Metal_plate820.jpg" />
     <None Remove="Resources\Notepad_icon.png" />
+    <None Remove="Resources\plug-female.png" />
+    <None Remove="Resources\plug-male.png" />
     <None Remove="Resources\Refresh.png" />
     <None Remove="Resources\save_as.png" />
+    <None Remove="Resources\stepper-motor.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.4.3" />
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
     <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdParty\DiagramDesigner\DiagramDesigner.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\AppIcon.ico">
@@ -47,6 +54,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Delete_Icon_small.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Device.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Electronic_circuit.jpg">
@@ -79,10 +89,19 @@
     <Resource Include="Resources\Notepad_icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\plug-female.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\plug-male.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Refresh.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\save_as.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\stepper-motor.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

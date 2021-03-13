@@ -1,0 +1,68 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:USBTerminal.Core.Resources"
+                    xmlns:s="clr-namespace:DiagramDesigner;assembly=DiagramDesigner" 
+                    xmlns:c="clr-namespace:DiagramDesigner.Controls;assembly=DiagramDesigner">
+
+    <Style x:Key="PlugConnectorStyle" TargetType="{x:Type s:Connector}">
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Cursor" Value="Cross"/>
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+    </Style>
+
+    <Style x:Key="LeftFemalePlugConnectorStyle" TargetType="{x:Type s:Connector}" BasedOn="{StaticResource PlugConnectorStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type s:Connector}">
+                    <Grid >
+                        <!-- transparent extra space makes connector easier to hit -->
+                        <Rectangle Fill="Transparent" Margin="-2"/>
+                        <Image >
+                            <Image.Source>
+                                <BitmapImage UriSource="/USBTerminal.Core;component/Resources/plug-female.png" Rotation="Rotate180" />
+                            </Image.Source>
+                        </Image>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RightFemalePlugConnectorStyle" TargetType="{x:Type s:Connector}" BasedOn="{StaticResource PlugConnectorStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type s:Connector}">
+                    <Grid >
+                        <!-- transparent extra space makes connector easier to hit -->
+                        <Rectangle Fill="Transparent" Margin="-2"/>
+                        <Image >
+                            <Image.Source>
+                                <BitmapImage UriSource="/USBTerminal.Core;component/Resources/plug-female.png" />
+                            </Image.Source>
+                        </Image>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="TopMalePlugConnectorStyle" TargetType="{x:Type s:Connector}" BasedOn="{StaticResource PlugConnectorStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type s:Connector}">
+                    <Grid >
+                        <!-- transparent extra space makes connector easier to hit -->
+                        <Rectangle Fill="Transparent" Margin="-2"/>
+                        <Image >
+                            <Image.Source>
+                                <BitmapImage UriSource="/USBTerminal.Core;component/Resources/plug-male.png" Rotation="Rotate270"/>
+                            </Image.Source>
+                        </Image>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
