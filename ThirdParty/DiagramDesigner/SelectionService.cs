@@ -4,12 +4,15 @@ using System.Linq;
 
 namespace DiagramDesigner
 {
-    internal class SelectionService
+    public class SelectionService
     {
+        public delegate void OnSelectionChanged(List<ISelectable> currentSelection);
+        public event OnSelectionChanged SelectionChanged;
+
         private DesignerCanvas designerCanvas;
 
         private List<ISelectable> currentSelection;
-        internal List<ISelectable> CurrentSelection
+        public List<ISelectable> CurrentSelection
         {
             get
             {
@@ -29,6 +32,10 @@ namespace DiagramDesigner
         {
             this.ClearSelection();
             this.AddToSelection(item);
+            if (SelectionChanged != null)
+            {
+                SelectionChanged(currentSelection);
+            }
         }
 
         internal void AddToSelection(ISelectable item)

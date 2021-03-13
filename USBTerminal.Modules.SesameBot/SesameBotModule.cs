@@ -20,7 +20,8 @@ namespace USBTerminal.Modules.SesameBot
         {
             //_regionManager.RequestNavigate(RegionNames.LeftPanelRegion, nameof(ConsoleView), NavigationArguments.TerminalParameters);
             //_regionManager.RequestNavigate(RegionNames.RightPanelRegion, nameof(ConsoleView), NavigationArguments.LogsParameters);
-            _regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(SesamePanel));
+            //_regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(SesamePanel));
+            _regionManager.RequestNavigate(RegionNames.MainRegion, nameof(BotDesigner));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

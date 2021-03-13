@@ -18,6 +18,12 @@ namespace DiagramDesigner
     public partial class DesignerCanvas
     {
         public static RoutedCommand Group = new RoutedCommand();
+
+        internal void RizeSelectionChanged()
+        {
+            throw new NotImplementedException();
+        }
+
         public static RoutedCommand Ungroup = new RoutedCommand();
         public static RoutedCommand BringForward = new RoutedCommand();
         public static RoutedCommand BringToFront = new RoutedCommand();

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using USBTerminal.Modules.SesameBot.ViewModels;
 
 namespace USBTerminal.Modules.SesameBot.Views
 {
@@ -23,6 +24,10 @@ namespace USBTerminal.Modules.SesameBot.Views
         public BotDesigner()
         {
             InitializeComponent();
+        }
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            //(DataContext as BotDesignerViewModel).DeviceDesigner = DeviceDesigner;
         }
     }
 }

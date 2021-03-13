@@ -7,7 +7,7 @@
         xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        Title="{Binding Title}" Height="800" Width="800" >
+        Title="{Binding Title}" Height="800" Width="1200" >
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <utils:VisibilityConverter x:Key="boolToVis" />
@@ -70,7 +70,7 @@
         -->
     <controls:HamburgerMenu x:Name="HamburgerMenuControl"
                                 IsPaneOpen="False"
-                                SelectedIndex="0"
+                                SelectedIndex="1"
                                 ItemTemplate="{StaticResource MenuItemTemplate}"
                                 OptionsItemTemplate="{StaticResource OptionsMenuItemTemplate}"
                                 HamburgerButtonClick="HamburgerMenuControl_HamburgerButtonClick" 

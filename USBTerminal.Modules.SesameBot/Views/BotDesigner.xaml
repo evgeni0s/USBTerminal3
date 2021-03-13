@@ -10,28 +10,95 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White"
-             prism:ViewModelLocator.AutoWireViewModel="True"
-             >
-    <Grid>
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid Margin="5,15,5,5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Margin="5,15,5,5" >
-            <Expander Header="Devices" IsExpanded="True" Height="300">
+        <StackPanel Grid.Column="0"  >
+            <Expander Header="Devices">
+                <TextBox>Test device</TextBox>
+            </Expander>
+            <Expander Header="Parts" IsExpanded="True" Height="300">
                     <s:Toolbox ItemSize="100,100">
                         <local:StepperFeatherWing IsHitTestVisible="False"/>
                         <local:StepperMotor IsHitTestVisible="False"/>
                     </s:Toolbox>
             </Expander>
+            <Button Command="{Binding NewDeviceCommand}">New</Button>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding SaveLocation}"/>
+                <Button Grid.Column="1" Command="{Binding SaveCommand}">Save</Button>
+            </Grid>
         </StackPanel>
         <GridSplitter Grid.Column="1" Margin="0,20"
                                   Width="3" Background="#8f8b79" 
                                   VerticalAlignment="Stretch" 
                                   HorizontalAlignment="Center" />
-        <s:DesignerCanvas Grid.Column="2" Focusable="true" x:Name="DeviceDesigner"
-                            Margin="10" FocusVisualStyle="{x:Null}" Background="AliceBlue"/>
+        <Grid Grid.Column="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Label>Device Name:</Label>
+                <TextBox Width="200" Text="{Binding DeviceName}"/>
+            </StackPanel>
+            <!--<s:DesignerCanvas x:Name="DeviceDesigner" Grid.Row="1" Focusable="true" 
+                                 FocusVisualStyle="{x:Null}" Background="AliceBlue"/>-->
+            <ContentControl x:Name="DeviceDesigner" Grid.Row="1" Content="{Binding DeviceDesigner}"/>
+        </Grid>
+        <GridSplitter Grid.Column="3" Margin="0,20"
+                                  Width="3" Background="#8f8b79" 
+                                  VerticalAlignment="Stretch" 
+                                  HorizontalAlignment="Center" />
+        <Grid Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label FontSize="16">Properties</Label>
+            <ListView Grid.Row="1" ItemsSource="{Binding Properties}" >
+                <!--Disable selection of items-->
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <Grid Background="{TemplateBinding Background}">
+                                        <Border Name="Selection" Visibility="Collapsed" />
+                                        <!-- This is used when GridView is put inside the ListView -->
+                                        <GridViewRowPresenter Grid.RowSpan="2"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="90" DisplayMemberBinding="{Binding Name}"  />
+                        <GridViewColumn Width="90" CellTemplateSelector="{StaticResource customCellTemplateSelector}"  />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
     </Grid>
 </UserControl>
