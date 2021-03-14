@@ -5,21 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using USBTerminal.Core.Controls.GridViewCells;
+using USBTerminal.Services.Interfaces.Models.SesameBot.Properties;
 
-namespace USBTerminal.Core.Utils
+namespace USBTerminal.Modules.SesameBot.Utils
 {
-    public class CustomCellTemplateSelector: DataTemplateSelector
+    public class CustomCellTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ComboboxTemplate { get; set; }
         public DataTemplate TextTemplate { get; set; }
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is ComboboxField comboboxField)
+            if (item is IComboboxField comboboxField)
             {
                 return ComboboxTemplate;
             }
-            if (item is TextField textField)
+            if (item is ITextField textField)
             {
                 return TextTemplate;
             }

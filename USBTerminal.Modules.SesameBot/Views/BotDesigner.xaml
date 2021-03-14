@@ -5,8 +5,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:USBTerminal.Modules.SesameBot.Views" 
+             xmlns:localUtils="clr-namespace:USBTerminal.Modules.SesameBot.Utils"
              xmlns:s="clr-namespace:DiagramDesigner;assembly=DiagramDesigner" 
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:listViewUtils="clr-namespace:USBTerminal.Core.Utils.ListViewStarLayout;assembly=USBTerminal.Core" xmlns:utils="clr-namespace:USBTerminal.Modules.SesameBot.Utils"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White"
@@ -17,17 +19,17 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0"  >
-            <Expander Header="Devices">
-                <TextBox>Test device</TextBox>
+            <Expander Header="Devices" IsExpanded="True">
+                <ListView ItemsSource="{Binding Devices}" SelectedItem="{Binding DeviceName}"/>
             </Expander>
             <Expander Header="Parts" IsExpanded="True" Height="300">
                     <s:Toolbox ItemSize="100,100">
-                        <local:StepperFeatherWing IsHitTestVisible="False"/>
-                        <local:StepperMotor IsHitTestVisible="False"/>
+                    <local:StepperFeatherWing IsHitTestVisible="False" ToolTip="Stepper Feather Wing"/>
+                    <local:StepperMotor IsHitTestVisible="False" ToolTip="Stepper Motor"/>
                     </s:Toolbox>
             </Expander>
             <Button Command="{Binding NewDeviceCommand}">New</Button>
@@ -66,11 +68,27 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Label FontSize="16">Properties</Label>
-            <ListView Grid.Row="1" ItemsSource="{Binding Properties}" >
-                <!--Disable selection of items-->
+            <!--<Label FontSize="16">Properties</Label>-->
+            <ListView Grid.Row="1" ItemsSource="{Binding Properties}" HorizontalContentAlignment="Stretch" 
+                      listViewUtils:ListViewLayoutManager.Enabled="true">
+
                 <ListView.Resources>
-                    <Style TargetType="{x:Type ListViewItem}">
+                    <DataTemplate x:Key="ComboboxTemplate">
+                        <ComboBox/>
+                    </DataTemplate>
+                    <DataTemplate x:Key="TextTemplate">
+                        <TextBox Text="{Binding Value}" 
+                                 IsEnabled="{Binding IsReadOnly, Converter={StaticResource InvertedBoolConverter}}" 
+                                 HorizontalAlignment="Stretch"
+                                 />
+                    </DataTemplate>
+
+                    <localUtils:CustomCellTemplateSelector x:Key="customCellTemplateSelector" 
+                                      ComboboxTemplate="{StaticResource ComboboxTemplate}"
+                                      TextTemplate="{StaticResource TextTemplate}"/>
+
+                    <!--Disable selection of items-->
+                    <!--<Style TargetType="{x:Type ListViewItem}">
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="BorderBrush" Value="Transparent"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -79,7 +97,9 @@
                                 <ControlTemplate TargetType="{x:Type ListViewItem}">
                                     <Grid Background="{TemplateBinding Background}">
                                         <Border Name="Selection" Visibility="Collapsed" />
-                                        <!-- This is used when GridView is put inside the ListView -->
+                                        -->
+                    <!-- This is used when GridView is put inside the ListView -->
+                    <!--
                                         <GridViewRowPresenter Grid.RowSpan="2"
                                           Margin="{TemplateBinding Padding}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -90,12 +110,18 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
-                    </Style>
+                    </Style>-->
+
                 </ListView.Resources>
                 <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="90" DisplayMemberBinding="{Binding Name}"  />
-                        <GridViewColumn Width="90" CellTemplateSelector="{StaticResource customCellTemplateSelector}"  />
+                    <GridView >
+                        <GridViewColumn Header="Properties"
+                                        DisplayMemberBinding="{Binding Name}"  
+                                        listViewUtils:RangeColumn.MinWidth="120"/>
+                        <GridViewColumn CellTemplateSelector="{StaticResource customCellTemplateSelector}" 
+                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}, 
+                                        Converter={StaticResource ListViewLastColumnWidthConverter}}"
+                                        listViewUtils:RangeColumn.IsFillColumn="true"/>
                     </GridView>
                 </ListView.View>
             </ListView>

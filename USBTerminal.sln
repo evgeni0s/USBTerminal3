@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USBTerminal.Modules.SesameB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{5D0C381D-5EA7-493D-A44C-85D97391B03A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagramDesigner", "ThirdParty\DiagramDesigner\DiagramDesigner.csproj", "{4CE50723-B2F3-4481-8B9C-AAF1DA5BE972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiagramDesigner", "ThirdParty\DiagramDesigner\DiagramDesigner.csproj", "{4CE50723-B2F3-4481-8B9C-AAF1DA5BE972}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

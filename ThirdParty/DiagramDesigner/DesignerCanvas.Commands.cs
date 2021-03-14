@@ -121,6 +121,44 @@ namespace DiagramDesigner
             }
         }
 
+        public void Open(string filePath)
+        {
+            XElement root = XElement.Load(filePath); 
+
+            if (root == null)
+                return;
+
+            this.Children.Clear();
+            this.SelectionService.ClearSelection();
+
+            IEnumerable<XElement> itemsXML = root.Elements("DesignerItems").Elements("DesignerItem");
+            foreach (XElement itemXML in itemsXML)
+            {
+                Guid id = new Guid(itemXML.Element("ID").Value);
+                DesignerItem item = DeserializeDesignerItem(itemXML, id, 0, 0);
+                this.Children.Add(item);
+                SetConnectorDecoratorTemplate(item);
+            }
+
+            this.InvalidateVisual();
+
+            IEnumerable<XElement> connectionsXML = root.Elements("Connections").Elements("Connection");
+            foreach (XElement connectionXML in connectionsXML)
+            {
+                Guid sourceID = new Guid(connectionXML.Element("SourceID").Value);
+                Guid sinkID = new Guid(connectionXML.Element("SinkID").Value);
+
+                String sourceConnectorName = connectionXML.Element("SourceConnectorName").Value;
+                String sinkConnectorName = connectionXML.Element("SinkConnectorName").Value;
+
+                Connector sourceConnector = GetConnector(sourceID, sourceConnectorName);
+                Connector sinkConnector = GetConnector(sinkID, sinkConnectorName);
+
+                Connection connection = new Connection(sourceConnector, sinkConnector);
+                Canvas.SetZIndex(connection, Int32.Parse(connectionXML.Element("zIndex").Value));
+                this.Children.Add(connection);
+            }
+        }
         #endregion
 
         #region Save Command
@@ -138,6 +176,20 @@ namespace DiagramDesigner
             root.Add(connectionsXML);
 
             SaveFile(root);
+        }
+
+        public void Save(string fileName)
+        {
+            IEnumerable<DesignerItem> designerItems = this.Children.OfType<DesignerItem>();
+            IEnumerable<Connection> connections = this.Children.OfType<Connection>();
+
+            XElement designerItemsXML = SerializeDesignerItems(designerItems);
+            XElement connectionsXML = SerializeConnections(connections);
+
+            XElement root = new XElement("Root");
+            root.Add(designerItemsXML);
+            root.Add(connectionsXML);
+            root.Save(fileName);
         }
 
         #endregion

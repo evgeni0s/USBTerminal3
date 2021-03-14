@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace USBTerminal.Services.Interfaces.SeasameConnection
+namespace USBTerminal.Services.Interfaces.Seasame
 {
     public interface ISeasameService
     {

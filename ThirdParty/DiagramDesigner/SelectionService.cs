@@ -8,6 +8,7 @@ namespace DiagramDesigner
     {
         public delegate void OnSelectionChanged(List<ISelectable> currentSelection);
         public event OnSelectionChanged SelectionChanged;
+        private bool selectionSet;
 
         private DesignerCanvas designerCanvas;
 
@@ -32,9 +33,24 @@ namespace DiagramDesigner
         {
             this.ClearSelection();
             this.AddToSelection(item);
-            if (SelectionChanged != null)
+            selectionSet = true;
+            //NotifySelectionChanged();
+        }
+
+        internal void NotifySelectionChanged()
+        {
+            // Delayed event so that textfields coud update properties
+            //TimedAction.ExecuteWithDelay(new Action(delegate { 
+            //    if (SelectionChanged != null)
+            //    {
+            //        SelectionChanged(currentSelection);
+            //    }
+            //}), TimeSpan.FromMilliseconds(50));
+            
+            if (SelectionChanged != null && selectionSet)
             {
                 SelectionChanged(currentSelection);
+                selectionSet = false;
             }
         }
 
@@ -80,6 +96,7 @@ namespace DiagramDesigner
         {
             CurrentSelection.ForEach(item => item.IsSelected = false);
             CurrentSelection.Clear();
+            selectionSet = true;
         }
 
         internal void SelectAll()

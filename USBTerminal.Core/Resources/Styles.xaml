@@ -4,22 +4,8 @@
                     xmlns:g="clr-namespace:USBTerminal.Core.Controls.GridViewCells"
                     xmlns:utils="clr-namespace:USBTerminal.Core.Utils">
 
-    <!--<DataTemplate DataType="{x:Type g:ComboboxField}">
-        <ComboBox/>
-    </DataTemplate>
-    <DataTemplate DataType="{x:Type g:TextField}">
-        <ComboBox/>
-    </DataTemplate>-->
-    <DataTemplate x:Key="ComboboxTemplate">
-        <ComboBox/>
-    </DataTemplate>
-    <DataTemplate x:Key="TextTemplate">
-        <TextBlock>Text textbox</TextBlock>
-    </DataTemplate>
+    <!--Do not write here anything. Check CommonStyles.xaml-->
 
-    <utils:CustomCellTemplateSelector x:Key="customCellTemplateSelector" 
-                                      ComboboxTemplate="{StaticResource ComboboxTemplate}"
-                                      TextTemplate="{StaticResource TextTemplate}"/>
 
     <!--Copy-Pasted from StockTrader MSDN app-->
     <!-- Focus Visual -->

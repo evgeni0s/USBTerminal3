@@ -15,7 +15,7 @@ using USBTerminal.Services.Interfaces.Events.SeasameBot;
 using USBTerminal.Services.Interfaces.Models;
 using USBTerminal.Services.Interfaces.Models.Network;
 using USBTerminal.Services.Interfaces.Network.Events;
-using USBTerminal.Services.Interfaces.SeasameConnection;
+using USBTerminal.Services.Interfaces.Seasame;
 using USBTerminal.Services.Interfaces.SocketConnection;
 
 namespace USBTerminal.Services.SeasameService

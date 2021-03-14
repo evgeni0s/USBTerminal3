@@ -39,10 +39,25 @@ namespace DiagramDesigner
                 // if you click directly on the canvas all 
                 // selected items are 'de-selected'
                 SelectionService.ClearSelection();
+
                 Focus();
                 e.Handled = true;
             }
         }
+        //protected override void On
+
+        protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseUp(e);
+            SelectionService.NotifySelectionChanged();
+        }
+
+        //protected override void OnMouseUp(MouseButtonEventArgs e)
+        //{
+        //    // Holly hotfixes
+        //    SelectionService.NotifySelectionChanged();
+        //    base.OnMouseUp(e);
+        //}
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
@@ -110,6 +125,7 @@ namespace DiagramDesigner
                     newItem.Focus();
                 }
 
+                SelectionService.NotifySelectionChanged();
                 e.Handled = true;
             }
         }

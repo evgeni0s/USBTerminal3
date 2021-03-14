@@ -11,10 +11,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
-using USBTerminal.Core.Controls.GridViewCells;
+using System.Xml.Linq;
 using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
+using USBTerminal.Services.Interfaces.Events.Properties;
+using USBTerminal.Services.Interfaces.Models.SesameBot;
+using USBTerminal.Services.Interfaces.Models.SesameBot.Properties;
+using USBTerminal.Services.Interfaces.Seasame;
 
 namespace USBTerminal.Modules.SesameBot.ViewModels
 {
@@ -23,56 +28,89 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private readonly IEventAggregator eventAggregator;
         private readonly IApplicationCommands applicationCommands;
         private readonly IMapper mapper;
+        private readonly IPropertiesService propertiesService;
         private readonly ILogger logger;
         private string deviceName;
         private DelegateCommand saveCommand;
         private DelegateCommand newDeviceCommand;
         private string saveLocation;
         private DesignerCanvas deviceDesigner;
-        private Dictionary<Guid, DeviceDesign> designs; 
-
+        private Dictionary<Guid, IComponentProperties> propertiesCash;
+        private List<IGridViewField> properties;
+        private ObservableCollection<string> devices;
+        private string selectedDevice;
+        private int nextMotorId = 1;
+        private int nextBoardId = 1;
 
         public BotDesignerViewModel(IRegionManager regionManager,
             ILogger logger,
             IApplicationCommands applicationCommands,
-            IMapper mapper)
+            IMapper mapper,
+            IPropertiesService propertiesService,
+            IEventAggregator eventAggregator)
             : base(regionManager, logger)
         {
             this.applicationCommands = applicationCommands;
             this.logger = logger;
             this.mapper = mapper;
+            this.propertiesService = propertiesService; 
+            this.eventAggregator = eventAggregator;
+            eventAggregator.GetEvent<NewDeviceConfigurationEvent>().Subscribe(OnConfigurationCreated);
 
             ExecuteNewDeviceCommand();
             // ToDo: move to app settings 
             var rootDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             saveLocation = Path.Combine(rootDirectory, "SeasameBot", "Devices");
-            deviceName = "SeasameBot_" + DateTime.Now;
+            deviceName = "SeasameBot_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss");
 
-            Properties = new ObservableCollection<object>();
-            Properties.Add(new ComboboxField() { Name = "MotorType" });
-            Properties.Add(new TextField() { Name = "Speed" });
+            propertiesCash = new Dictionary<Guid, IComponentProperties>();
+
+            Devices = new ObservableCollection<string>(propertiesService.AllDevices());
         }
+
+
         public DesignerCanvas DeviceDesigner { get => deviceDesigner; set => SetProperty(ref deviceDesigner, value); }
 
-        public ObservableCollection<object> Properties { get; set; }
+        public List<IGridViewField> Properties { get => properties; set => SetProperty(ref properties, value); }
+
+        public ObservableCollection<string> Devices { get => devices; set => SetProperty(ref devices, value); }
 
         public string DeviceName
         {
             get => deviceName;
-            set => SetProperty(ref deviceName, value);
+            set
+            {
+                SetProperty(ref deviceName, value);
+                ExecuteOpenDeviceCommand();
+            }
+
         }
+
         public string SaveLocation
         {
             get => saveLocation;
             set => SetProperty(ref saveLocation, value);
         }
 
+        //public string SelectedDevice
+        //{
+        //    get => selectedDevice;
+        //    set
+        //    {
+        //        SetProperty(ref selectedDevice, value);
+        //        ExecuteOpenDeviceCommand();
+        //    }
+        //}
+
         public DelegateCommand SaveCommand =>
            saveCommand ?? (saveCommand = new DelegateCommand(ExecuteSaveCommand));
 
         private void ExecuteSaveCommand()
         {
-            Directory.CreateDirectory(saveLocation);
+            //Directory.CreateDirectory(saveLocation);
+            propertiesService.Save(DeviceName, propertiesCash.Values.ToList());
+            var saveDirectory = Path.Combine(SaveLocation, deviceName, "schema.json");
+            deviceDesigner.Save(saveDirectory);
         }
 
         public DelegateCommand NewDeviceCommand =>
@@ -84,20 +122,64 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             {
                 DeviceDesigner.SelectionService.SelectionChanged -= SelectionChanged;
             }
+
             DeviceDesigner = new DesignerCanvas();
             DeviceDesigner.FocusVisualStyle = null;
             DeviceDesigner.Focusable = true;
             DeviceDesigner.Background = Brushes.AliceBlue;
             DeviceDesigner.SelectionService.SelectionChanged += SelectionChanged;
+
+            Properties = new List<IGridViewField>();
             RaisePropertyChanged(nameof(DeviceDesigner));
+        }
+
+        private void ExecuteOpenDeviceCommand()
+        {
+
+            propertiesCash.Clear();
+            var existingProperties = propertiesService.GetProperties(deviceName);
+            foreach (var prop in existingProperties)
+            {
+                propertiesCash.Add(prop.Id, prop);
+            }
+            var schema = Path.Combine(saveLocation, deviceName, "schema.json");
+            DeviceDesigner.Open(schema);
+
         }
 
         private void SelectionChanged(List<ISelectable> currentSelection)
         {
-            if(currentSelection == null || currentSelection.Count == 0)
-            {
 
+            var designerItems = currentSelection.OfType<DesignerItem>();
+            if (currentSelection == null || designerItems.Count() != 1)
+            {
+                Properties.Clear();
+                return;
             }
+            var component = designerItems.FirstOrDefault();
+            if (propertiesCash.ContainsKey(component.ID))
+            {
+                Properties = propertiesCash[component.ID].Properties;
+                return;
+            }
+            var componentConent = component.Content as UserControl;
+            var componentType = componentConent.ToolTip.ToString();
+            if (componentType == "Stepper Motor")
+            {
+                propertiesCash.Add(component.ID, propertiesService.Default(MotorType.Stepper, nextMotorId++));
+            }
+            else if (componentType == "Stepper Feather Wing")
+            {
+                propertiesCash.Add(component.ID, propertiesService.DefaultBoard(nextBoardId++));
+            }
+
+            Properties = propertiesCash[component.ID].Properties;
+            RaisePropertyChanged(nameof(Properties));
+        }
+
+        private void OnConfigurationCreated(string name)
+        {
+            Devices.Add(name);
         }
     }
 }

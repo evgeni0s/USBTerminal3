@@ -13,7 +13,7 @@ using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces.Events.Network;
 using USBTerminal.Services.Interfaces.Events.SeasameBot;
 using USBTerminal.Services.Interfaces.Models;
-using USBTerminal.Services.Interfaces.SeasameConnection;
+using USBTerminal.Services.Interfaces.Seasame;
 
 namespace USBTerminal.Modules.SesameBot.ViewModels
 {

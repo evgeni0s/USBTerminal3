@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace USBTerminal.Core.Controls.GridViewCells
+namespace USBTerminal.Services.Interfaces.Models.SesameBot.Properties
 {
-    public class GridViewField
+    public interface IComboboxField
     {
-        public string Name { get; set; }
     }
 }

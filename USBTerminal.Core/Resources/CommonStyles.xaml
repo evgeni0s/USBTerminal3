@@ -14,6 +14,7 @@
     <utils:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
     <utils:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter"/>
     <utils:ValueToBoolConverter x:Key="ValueToBoolConverter"/>
+    <utils:ListViewLastColumnWidthConverter x:Key="ListViewLastColumnWidthConverter"/>
 
     <DataTemplate x:Key="legendTemplate" >
         <Grid HorizontalAlignment="Stretch">
