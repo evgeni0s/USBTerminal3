@@ -53,7 +53,7 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
                 <Label>Device Name:</Label>
-                <TextBox Width="200" Text="{Binding DeviceName}"/>
+                <TextBox Width="200" Text="{Binding DeviceName}" IsEnabled="False"/>
             </StackPanel>
             <!--<s:DesignerCanvas x:Name="DeviceDesigner" Grid.Row="1" Focusable="true" 
                                  FocusVisualStyle="{x:Null}" Background="AliceBlue"/>-->

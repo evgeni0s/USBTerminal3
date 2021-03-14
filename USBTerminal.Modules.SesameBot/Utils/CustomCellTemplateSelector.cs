@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using USBTerminal.Services.Interfaces.Models.SesameBot.Properties;
+using USBTerminal.Services.SeasameService.GridViewCells;
 
 namespace USBTerminal.Modules.SesameBot.Utils
 {
@@ -15,11 +15,11 @@ namespace USBTerminal.Modules.SesameBot.Utils
         public DataTemplate TextTemplate { get; set; }
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is IComboboxField comboboxField)
+            if (item is ComboboxField comboboxField)
             {
                 return ComboboxTemplate;
             }
-            if (item is ITextField textField)
+            if (item is TextField textField || item is GridViewField field)
             {
                 return TextTemplate;
             }

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using USBTerminal.Services.Interfaces.Models.SesameBot.Properties;
 
 namespace USBTerminal.Services.SeasameService.GridViewCells
 {
-    public class GridViewField : IGridViewField
+    public class GridViewField : IComparable<GridViewField>
     {
         // Smaller goes last
         private static List<string> sortingOrder = new List<string> { "Type", "Name"};
@@ -15,7 +14,7 @@ namespace USBTerminal.Services.SeasameService.GridViewCells
         public string Value { get; set; }
         public bool IsReadOnly { get; set; }
 
-        public virtual int CompareTo(IGridViewField other)
+        public virtual int CompareTo(GridViewField other)
         {
             var priorityThis = sortingOrder.IndexOf(Name);
             var priorityOther = sortingOrder.IndexOf(other.Name);

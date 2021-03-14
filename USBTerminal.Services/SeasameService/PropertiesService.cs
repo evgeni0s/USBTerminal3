@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using USBTerminal.Services.Interfaces.Events.Properties;
 using USBTerminal.Services.Interfaces.Models.SesameBot;
-using USBTerminal.Services.Interfaces.Models.SesameBot.Properties;
 using USBTerminal.Services.Interfaces.Seasame;
 using USBTerminal.Services.SeasameService.GridViewCells;
 
@@ -29,19 +28,19 @@ namespace USBTerminal.Services.SeasameService
             Directory.CreateDirectory(saveLocation);
         }
 
-        public List<IComponentProperties> GetProperties(string deviceName)
+        public List<ComponentProperties> GetProperties(string deviceName)
         {
             var propertiesPath = Path.Combine(saveLocation, deviceName, "properties.json");
             var  JSONtxt = File.ReadAllText(propertiesPath);
             var properties = JsonConvert.DeserializeObject<List<ComponentProperties>>(JSONtxt);
-            return new List<IComponentProperties>(properties);
+            return new List<ComponentProperties>(properties);
         }
 
-        public IComponentProperties Default(MotorType motor, int nextNameIndex)
+        public ComponentProperties Default(MotorType motor, int nextNameIndex)
         {
             var p = new ComponentProperties
             {
-                Properties = new List<IGridViewField>() {
+                Properties = new List<GridViewField>() {
                     new TextField() { Name = "Type", Value = Enum.GetName(typeof(MotorType), motor), IsReadOnly = true },
                     new TextField() { Name = "Default Speed (RPM)", Value = "10" },
                 }
@@ -55,11 +54,11 @@ namespace USBTerminal.Services.SeasameService
             return p;
         }
 
-        public IComponentProperties DefaultBoard(int nextNameIndex)
+        public ComponentProperties DefaultBoard(int nextNameIndex)
         {
             var p = new ComponentProperties
             {
-                Properties = new List<IGridViewField>() {
+                Properties = new List<GridViewField>() {
                     new TextField() { Name = "Name", Value = $"MotorShield {nextNameIndex}" },
                     new TextField() { Name = "Board", Value = "Stepper Feather Wing", IsReadOnly = true },
                     new TextField() { Name = "Ports", Value = "6", IsReadOnly = true }
@@ -76,7 +75,7 @@ namespace USBTerminal.Services.SeasameService
             return devicesFolder;
         }
 
-        public void Save(string deviceName, List<IComponentProperties> properties)
+        public void Save(string deviceName, List<ComponentProperties> properties)
         {
             var propertiesPath = Path.Combine(saveLocation, deviceName);
             var propertiesDirectory = Directory.CreateDirectory(propertiesPath);

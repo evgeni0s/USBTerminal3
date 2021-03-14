@@ -158,6 +158,8 @@ namespace DiagramDesigner
                 Canvas.SetZIndex(connection, Int32.Parse(connectionXML.Element("zIndex").Value));
                 this.Children.Add(connection);
             }
+
+            //SelectionService.NotifySelectionChanged();
         }
         #endregion
 

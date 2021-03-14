@@ -18,8 +18,9 @@ using USBTerminal.Core.Interfaces;
 using USBTerminal.Core.Mvvm;
 using USBTerminal.Services.Interfaces.Events.Properties;
 using USBTerminal.Services.Interfaces.Models.SesameBot;
-using USBTerminal.Services.Interfaces.Models.SesameBot.Properties;
 using USBTerminal.Services.Interfaces.Seasame;
+using USBTerminal.Services.SeasameService;
+using USBTerminal.Services.SeasameService.GridViewCells;
 
 namespace USBTerminal.Modules.SesameBot.ViewModels
 {
@@ -35,8 +36,8 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
         private DelegateCommand newDeviceCommand;
         private string saveLocation;
         private DesignerCanvas deviceDesigner;
-        private Dictionary<Guid, IComponentProperties> propertiesCash;
-        private List<IGridViewField> properties;
+        private Dictionary<Guid, ComponentProperties> propertiesCash;
+        private List<GridViewField> properties;
         private ObservableCollection<string> devices;
         private string selectedDevice;
         private int nextMotorId = 1;
@@ -56,14 +57,11 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             this.propertiesService = propertiesService; 
             this.eventAggregator = eventAggregator;
             eventAggregator.GetEvent<NewDeviceConfigurationEvent>().Subscribe(OnConfigurationCreated);
-
             ExecuteNewDeviceCommand();
             // ToDo: move to app settings 
             var rootDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             saveLocation = Path.Combine(rootDirectory, "SeasameBot", "Devices");
-            deviceName = "SeasameBot_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss");
-
-            propertiesCash = new Dictionary<Guid, IComponentProperties>();
+            propertiesCash = new Dictionary<Guid, ComponentProperties>();
 
             Devices = new ObservableCollection<string>(propertiesService.AllDevices());
         }
@@ -71,7 +69,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
 
         public DesignerCanvas DeviceDesigner { get => deviceDesigner; set => SetProperty(ref deviceDesigner, value); }
 
-        public List<IGridViewField> Properties { get => properties; set => SetProperty(ref properties, value); }
+        public List<GridViewField> Properties { get => properties; set => SetProperty(ref properties, value); }
 
         public ObservableCollection<string> Devices { get => devices; set => SetProperty(ref devices, value); }
 
@@ -129,13 +127,15 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             DeviceDesigner.Background = Brushes.AliceBlue;
             DeviceDesigner.SelectionService.SelectionChanged += SelectionChanged;
 
-            Properties = new List<IGridViewField>();
+            Properties = new List<GridViewField>();
+            deviceName = "SeasameBot_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss"); 
+            RaisePropertyChanged(nameof(DeviceName));
             RaisePropertyChanged(nameof(DeviceDesigner));
         }
 
         private void ExecuteOpenDeviceCommand()
         {
-
+            
             propertiesCash.Clear();
             var existingProperties = propertiesService.GetProperties(deviceName);
             foreach (var prop in existingProperties)
@@ -144,7 +144,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             }
             var schema = Path.Combine(saveLocation, deviceName, "schema.json");
             DeviceDesigner.Open(schema);
-
+            SelectionChanged(new List<ISelectable>());
         }
 
         private void SelectionChanged(List<ISelectable> currentSelection)
@@ -153,7 +153,7 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             var designerItems = currentSelection.OfType<DesignerItem>();
             if (currentSelection == null || designerItems.Count() != 1)
             {
-                Properties.Clear();
+                Properties = new List<GridViewField>();
                 return;
             }
             var component = designerItems.FirstOrDefault();
@@ -166,11 +166,19 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
             var componentType = componentConent.ToolTip.ToString();
             if (componentType == "Stepper Motor")
             {
-                propertiesCash.Add(component.ID, propertiesService.Default(MotorType.Stepper, nextMotorId++));
+                var newPropertyComponent = propertiesService.Default(MotorType.Stepper, nextMotorId++);
+                newPropertyComponent.Id = component.ID;
+                propertiesCash.Add(newPropertyComponent.Id, newPropertyComponent);
             }
             else if (componentType == "Stepper Feather Wing")
             {
-                propertiesCash.Add(component.ID, propertiesService.DefaultBoard(nextBoardId++));
+                var newPropertyComponent = propertiesService.DefaultBoard(nextBoardId++);
+                newPropertyComponent.Id = component.ID;
+                propertiesCash.Add(newPropertyComponent.Id, newPropertyComponent);
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
 
             Properties = propertiesCash[component.ID].Properties;
@@ -179,7 +187,10 @@ namespace USBTerminal.Modules.SesameBot.ViewModels
 
         private void OnConfigurationCreated(string name)
         {
-            Devices.Add(name);
+            if (!Devices.Contains(name))
+            {
+                Devices.Add(name);
+            }
         }
     }
 }
