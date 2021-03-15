@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\InWit.Core\InWit.Core.csproj" />
+	  <ProjectReference Include="..\InWit.ViewModel.Utils\InWit.ViewModel.Utils.csproj" />
+	</ItemGroup>
+
+</Project>

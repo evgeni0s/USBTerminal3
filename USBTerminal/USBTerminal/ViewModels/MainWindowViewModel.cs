@@ -70,9 +70,11 @@ namespace USBTerminal.ViewModels
                     regionManager.RequestNavigate(RegionNames.RightPanelRegion, nameof(ConsoleView), NavigationArguments.LogsParameters);
                     regionManager.RequestNavigate(RegionNames.BottomPanelRegion, nameof(SesamePanel));
                     break;
-
                 case "Bot Designer":
                     regionManager.RequestNavigate(RegionNames.MainRegion, nameof(BotDesigner));
+                    break;
+                case "Movement Designer":
+                    regionManager.RequestNavigate(RegionNames.MainRegion, nameof(MovementDesigner));
                     break;
                 default:
                     logger.Error($"Navigate command has failed. Check menu item lable.");

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace USBTerminal.Services.Interfaces.Models.SesameBot
 {
-    public static class MoveDirections
+    public enum Directions
     {
-        public static string Forward = "Forward";
-        public static string Back= "Back";
+        Forward,
+        Back
     }
 }

@@ -5,9 +5,9 @@
                     xmlns:utils="clr-namespace:USBTerminal.Core.Utils">
 
     <!--Do not write here anything. Check CommonStyles.xaml-->
+ 
 
-
-    <!--Copy-Pasted from StockTrader MSDN app-->
+        <!--Copy-Pasted from StockTrader MSDN app-->
     <!-- Focus Visual -->
 
     <Style x:Key="ButtonFocusVisual">

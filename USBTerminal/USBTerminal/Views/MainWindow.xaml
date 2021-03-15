@@ -70,7 +70,7 @@
         -->
     <controls:HamburgerMenu x:Name="HamburgerMenuControl"
                                 IsPaneOpen="False"
-                                SelectedIndex="1"
+                                SelectedIndex="2"
                                 ItemTemplate="{StaticResource MenuItemTemplate}"
                                 OptionsItemTemplate="{StaticResource OptionsMenuItemTemplate}"
                                 HamburgerButtonClick="HamburgerMenuControl_HamburgerButtonClick" 
@@ -93,6 +93,13 @@
                         </controls:HamburgerMenuIconItem.Icon>
                     </controls:HamburgerMenuIconItem>
 
+                <controls:HamburgerMenuIconItem Label="Movement Designer" Command="{Binding NavigateCommand}" 
+                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
+                        <controls:HamburgerMenuIconItem.Icon>
+                            <iconPacks:PackIconOcticons Kind="WorkflowAll" />
+                        </controls:HamburgerMenuIconItem.Icon>
+                </controls:HamburgerMenuIconItem>
+                    
                 <controls:HamburgerMenuIconItem Label="Network Connection" Command="{Binding NavigateCommand}" 
                                                 CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Label}">
                         <controls:HamburgerMenuIconItem.Icon>

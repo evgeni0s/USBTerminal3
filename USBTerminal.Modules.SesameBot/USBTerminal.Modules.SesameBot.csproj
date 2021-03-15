@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Services\USBTerminal.Services.Interfaces\USBTerminal.Services.Interfaces.csproj" />
     <ProjectReference Include="..\ThirdParty\DiagramDesigner\DiagramDesigner.csproj" />
+    <ProjectReference Include="..\ThirdParty\Slider\InWit.WPF.MultiRangeSlider\InWit.WPF.MultiRangeSlider.csproj" />
     <ProjectReference Include="..\USBTerminal.Core\USBTerminal.Core.csproj" />
   </ItemGroup>
 

@@ -93,32 +93,20 @@ namespace USBTerminal.Modules.Wifi.ViewModels
 
         public string IP
         {
-            get => ip; 
-            set
-            {
-                ip = value;
-                SetProperty(ref ip, value);
-            }
+            get => ip;
+            set => SetProperty(ref ip, value);
         }
 
         public string HostName
         {
-            get => hostName; 
-            set
-            {
-                hostName = value;
-                SetProperty(ref hostName, value);
-            }
+            get => hostName;
+            set => SetProperty(ref hostName, value);
         }
 
         public string Port
         {
-            get => port; 
-            set
-            {
-                port = value;
-                SetProperty(ref port, value);
-            }
+            get => port;
+            set => SetProperty(ref port, value);
         }
     }
 }

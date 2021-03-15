@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="USBTerminal.Modules.SesameBot.Views.MovementDesigner"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:USBTerminal.Modules.SesameBot.Views"
+             xmlns:localUtils="clr-namespace:USBTerminal.Modules.SesameBot.Utils"
+             xmlns:core="clr-namespace:USBTerminal.Core;assembly=USBTerminal.Core" 
+             xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core" 
+             xmlns:prism="http://prismlibrary.com/" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:InWit="clr-namespace:InWit.WPF.MultiRangeSlider;assembly=InWit.WPF.MultiRangeSlider" xmlns:U="clr-namespace:InWit.ViewModel.Utils;assembly=InWit.ViewModel.Utils" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Background="White"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <localUtils:SliderEventArgsToDouble x:Key="EventArgsToDouble" />
+    </UserControl.Resources>
+         <!--https://mahapps.com/docs/controls/rangeslider
+         https://www.codeproject.com/Articles/626132/WPF-MultiRangeSlider-Control-->
+    <Grid Margin="5,15,5,5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <!--<ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="250"/>-->
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0"  >
+            <Expander Header="Movements" IsExpanded="True">
+                <ListView ItemsSource="{Binding Movements}" SelectedItem="{Binding Movement}"/>
+            </Expander>
+            <Button Command="{Binding NewMovementCommand}" 
+                    Style="{DynamicResource MahApps.Styles.Button.Circle}" 
+                    Height="30" 
+                    Width="30" 
+                    Foreground="White"
+                    Background="Green"
+                    BorderBrush="White">
+                <iconPacks:PackIconBootstrapIcons Kind="Plus" />
+            </Button>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding SaveLocation}"/>
+                <Button Grid.Column="1" Command="{Binding SaveCommand}">Save</Button>
+            </Grid>
+        </StackPanel>
+        <GridSplitter Grid.Column="1" Margin="0,20"
+                                  Width="3" Background="#8f8b79" 
+                                  VerticalAlignment="Stretch" 
+                                  HorizontalAlignment="Center" />
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Content="Bound MultiRange slider" FontWeight="Bold"/>
+            <TextBlock Grid.Row="1" Text="*Double click slider bar to create new slider thumb (new range)" Padding="5,0,0,0" TextWrapping="Wrap"/>
+            <Canvas Grid.Row="3">
+                <iconPacks:PackIconMaterialDesign x:Name="AddNewItemHint" Kind="AddLocation" 
+                                                  Visibility="Hidden"
+                                                  Foreground="Green" 
+                                                  Margin="-13 -20 0 0" 
+                                                  Width="25" 
+                                                  Height="25"/>
+            </Canvas>
+            
+            <!---->
+            <InWit:WitMultiRangeSlider Grid.Row="3" x:Name="Slider"
+      MouseMove="Slider_MouseMove"
+                    MouseEnter="Slider_MouseEnter"
+                    MouseLeave="Slider_MouseLeave"
+                    ItemsSource="{Binding RangeItems}" SelectedItem="{Binding SelectedRange, Mode=TwoWay}" Margin="0,3,0,3"
+                    LeftValueBinding="From" RightValueBinding="To"
+                    Minimum="{Binding SliderMinimum}" Maximum="{Binding SliderMaximum}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MultiRangeSliderBarClicked">
+                            <U:InvokeCommandActionWithParam Command="{Binding InsertRangeCmd}"  
+                                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=InvokeParameter}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+            </InWit:WitMultiRangeSlider>
+            <DataGrid Grid.Row="4"  ItemsSource="{Binding RangeItems}" SelectedItem="{Binding SelectedRange, Mode=TwoWay}" CanUserAddRows="False" CanUserDeleteRows="False"
+                           CanUserReorderColumns="False" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Width="*" Header="Name" Binding="{Binding Name, Mode=TwoWay}" SortMemberPath="Name"/>
+                    <DataGridTextColumn Width="Auto" MinWidth="40" Header="From" Binding="{Binding From}" IsReadOnly="True" SortMemberPath="From"/>
+                    <DataGridTextColumn Width="Auto" MinWidth="40" Header="To" Binding="{Binding To}" IsReadOnly="True" SortMemberPath="To"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!--<Button Width="100" Height="100" Grid.Row="4" x:Name="btn">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border CornerRadius="2" BorderThickness="3" BorderBrush="DarkGray" x:Name="border">
+                                        <Border.ContextMenu>
+                                            <ContextMenu x:Name="cmenu">
+                                                <TextBlock>Information</TextBlock>
+                                            </ContextMenu>
+                                        </Border.ContextMenu>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="ContextMenu.IsOpen" Value="True" TargetName="cmenu"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>-->
+        </Grid>
+    </Grid>
+</UserControl>

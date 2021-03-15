@@ -12,6 +12,7 @@ using USBTerminal.Core.Utils;
 using USBTerminal.Modules.Console;
 using USBTerminal.Modules.Console.Views;
 using USBTerminal.Modules.SesameBot;
+using USBTerminal.Modules.SesameBot.ViewModels;
 using USBTerminal.Modules.USB;
 using USBTerminal.Modules.USB.ViewModels;
 using USBTerminal.Modules.Wifi;
@@ -53,6 +54,7 @@ namespace USBTerminal
             containerRegistry.RegisterSingleton<IPropertiesService, PropertiesService>();
             containerRegistry.Register<USBPortViewModel>();// childe vm
             containerRegistry.Register<NetworkConnectionViewModel>();// childe vm
+            containerRegistry.Register<StepperMovementViewModel>();// childe vm
             containerRegistry.Register<CustomRichTextBox>();
 
             var config = new MapperConfiguration(cfg =>
