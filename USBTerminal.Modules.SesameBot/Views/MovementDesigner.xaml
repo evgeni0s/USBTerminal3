@@ -8,26 +8,29 @@
              xmlns:core="clr-namespace:USBTerminal.Core;assembly=USBTerminal.Core" 
              xmlns:utils="clr-namespace:USBTerminal.Core.Utils;assembly=USBTerminal.Core" 
              xmlns:prism="http://prismlibrary.com/" 
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:InWit="clr-namespace:InWit.WPF.MultiRangeSlider;assembly=InWit.WPF.MultiRangeSlider" xmlns:U="clr-namespace:InWit.ViewModel.Utils;assembly=InWit.ViewModel.Utils" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             xmlns:InWit="clr-namespace:InWit.WPF.MultiRangeSlider;assembly=InWit.WPF.MultiRangeSlider" 
+             xmlns:U="clr-namespace:InWit.ViewModel.Utils;assembly=InWit.ViewModel.Utils" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+             xmlns:view="clr-namespace:WpfRotaryControlDemo.View;assembly=USBTerminal.Core"
              mc:Ignorable="d" 
              prism:ViewModelLocator.AutoWireViewModel="True"
              Background="White"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="1200">
     <UserControl.Resources>
         <localUtils:SliderEventArgsToDouble x:Key="EventArgsToDouble" />
     </UserControl.Resources>
-         <!--https://mahapps.com/docs/controls/rangeslider
+    <!--https://mahapps.com/docs/controls/rangeslider
          https://www.codeproject.com/Articles/626132/WPF-MultiRangeSlider-Control-->
     <Grid Margin="5,15,5,5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
-            <!--<ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="250"/>-->
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0"  >
-            <Expander Header="Movements" IsExpanded="True">
+            <Expander Header="Movements explorer" IsExpanded="True">
                 <ListView ItemsSource="{Binding Movements}" SelectedItem="{Binding Movement}"/>
             </Expander>
             <Button Command="{Binding NewMovementCommand}" 
@@ -39,7 +42,7 @@
                     BorderBrush="White">
                 <iconPacks:PackIconBootstrapIcons Kind="Plus" />
             </Button>
-            
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -53,73 +56,314 @@
                                   Width="3" Background="#8f8b79" 
                                   VerticalAlignment="Stretch" 
                                   HorizontalAlignment="Center" />
+        <!--Left Column-->
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="Bound MultiRange slider" FontWeight="Bold"/>
-            <TextBlock Grid.Row="1" Text="*Double click slider bar to create new slider thumb (new range)" Padding="5,0,0,0" TextWrapping="Wrap"/>
-            <Canvas Grid.Row="3">
-                <iconPacks:PackIconMaterialDesign x:Name="AddNewItemHint" Kind="AddLocation" 
-                                                  Visibility="Hidden"
-                                                  Foreground="Green" 
-                                                  Margin="-13 -20 0 0" 
-                                                  Width="25" 
-                                                  Height="25"/>
-            </Canvas>
-            
-            <!---->
-            <InWit:WitMultiRangeSlider Grid.Row="3" x:Name="Slider"
-      MouseMove="Slider_MouseMove"
-                    MouseEnter="Slider_MouseEnter"
-                    MouseLeave="Slider_MouseLeave"
-                    ItemsSource="{Binding RangeItems}" SelectedItem="{Binding SelectedRange, Mode=TwoWay}" Margin="0,3,0,3"
-                    LeftValueBinding="From" RightValueBinding="To"
-                    Minimum="{Binding SliderMinimum}" Maximum="{Binding SliderMaximum}">
+
+            <!--Movement Details-->
+            <Expander Header="Movement design" IsExpanded="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!--Parameters-->
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="0,4"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Label>Motor Type</Label>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding MotorTypes}" SelectedItem="{Binding SelectedMotorType}"></ComboBox>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Label>Infinite</Label>
+                            <mah:ToggleSwitch Grid.Column="1"
+                                              IsOn="{Binding IsInfinite}"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" >
+                                <Label>Step Type</Label>
+                                <iconPacks:PackIconMaterial Kind="HelpCircleOutline" 
+                                                            SnapsToDevicePixels="True"
+                                                Width="14" 
+                                                Background="White"
+                                                Foreground="Blue" 
+                                                Margin="30,5,0,0">
+                                    <iconPacks:PackIconMaterial.ToolTip>
+                                        <TextBlock>
+                                            <TextBlock.Inlines>
+                                                <Run FontWeight="Bold" Text="Single" /> means single-coil activation
+                                                <LineBreak />
+                                                <LineBreak />
+                                                <Run FontWeight="Bold" Text="Double" /> means 2 coils are activated at once (for higher torque)
+                                                <LineBreak />
+                                                <LineBreak />
+                                                <Run FontWeight="Bold" Text="Interleave" /> means that it alternates between single and double
+                                                <LineBreak /> to get twice the resolution (but of course its half the speed).
+                                                <LineBreak />
+                                                <LineBreak />
+                                                <Run FontWeight="Bold" Text="Microstepping" /> is a method where the coils are PWM'd to create
+                                                <LineBreak /> smooth motion between steps.
+                                            </TextBlock.Inlines>
+                                        </TextBlock>
+                                    </iconPacks:PackIconMaterial.ToolTip>
+                                </iconPacks:PackIconMaterial>
+                            </StackPanel>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding StepTypes}"
+                                        SelectedItem="{Binding SelectedStep}"/>
+                            <!--<mah:ToggleSwitch Grid.Column="1"
+                                              IsOn="{Binding IsInfinite}"/>-->
+                        </Grid>
+
+                    </StackPanel>
+
+                    <!--Speed indicator-->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label HorizontalAlignment="Center" FontSize="16">Speed (RPM)</Label>
+                        <view:RotaryControl Grid.Row="1"  FontBrush="White" FontSize="10" Foreground="Black" Background="Transparent" >
+                            <view:RotaryControl.OuterDialFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Black" Offset="0"/>
+                                    <GradientStop Color="Gray" Offset="0.5"/>
+                                    <GradientStop Color="Black" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.OuterDialFill>
+                            <view:RotaryControl.OuterDialBorder>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Gray" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.5"/>
+                                    <GradientStop Color="Gray" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.OuterDialBorder>
+                            <view:RotaryControl.OuterDialBorderThickness>5</view:RotaryControl.OuterDialBorderThickness>
+
+                            <view:RotaryControl.InnerDialRadius>2</view:RotaryControl.InnerDialRadius>
+                            <view:RotaryControl.InnerDialFill>Transparent</view:RotaryControl.InnerDialFill>
+
+                            <view:RotaryControl.LabelDialRadius>58</view:RotaryControl.LabelDialRadius>
+                            <view:RotaryControl.MajorTickDialRadius>50</view:RotaryControl.MajorTickDialRadius>
+                            <view:RotaryControl.MajorTickLength>8</view:RotaryControl.MajorTickLength>
+                            <view:RotaryControl.NumberOfMajorTicks>13</view:RotaryControl.NumberOfMajorTicks>
+                            <view:RotaryControl.MajorTickIncrement>50</view:RotaryControl.MajorTickIncrement>
+                            <view:RotaryControl.MajorTickBrush>White</view:RotaryControl.MajorTickBrush>
+                            <view:RotaryControl.NumberOfMinorTicks>4</view:RotaryControl.NumberOfMinorTicks>
+                            <view:RotaryControl.MinorTickBrush>White</view:RotaryControl.MinorTickBrush>
+
+                            <view:RotaryControl.PointerFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Gray" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.5"/>
+                                    <GradientStop Color="Gray" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.PointerFill>
+                            <view:RotaryControl.PointerAxleRadius>5</view:RotaryControl.PointerAxleRadius>
+                            <view:RotaryControl.PointerAxleFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Gray" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.5"/>
+                                    <GradientStop Color="Gray" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.PointerAxleFill>
+                            <view:RotaryControl.PointerLength>40</view:RotaryControl.PointerLength>
+                            <view:RotaryControl.PointerWidth>8</view:RotaryControl.PointerWidth>
+                            <view:RotaryControl.PointerType>arrow</view:RotaryControl.PointerType>
+
+                            <view:RotaryControl.StartAngleInDegrees>210</view:RotaryControl.StartAngleInDegrees>
+                            <view:RotaryControl.EndAngleInDegrees>150</view:RotaryControl.EndAngleInDegrees>
+
+                            <view:RotaryControl.SegmentThickness>15</view:RotaryControl.SegmentThickness>
+                            <view:RotaryControl.SegmentRadius>30</view:RotaryControl.SegmentRadius>
+                            <view:RotaryControl.Segments>
+                                <x:Array Type="{x:Type view:RotaryControlSegment}" >
+                                    <view:RotaryControlSegment Fill="YellowGreen" AngleInDegrees="210"/>
+                                    <view:RotaryControlSegment Fill="Gold" AngleInDegrees="30"/>
+                                    <view:RotaryControlSegment Fill="Orange" AngleInDegrees="30"/>
+                                    <view:RotaryControlSegment Fill="Crimson" AngleInDegrees="30"/>
+                                </x:Array>
+                            </view:RotaryControl.Segments>
+                        </view:RotaryControl>
+
+                        <TextBox Grid.Row="2" Width="70"/>
+                    </Grid>
+                    
+                    <!--Distance indicator-->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <mah:ToggleSwitch HorizontalAlignment="Center" 
+                                          FontSize="16"
+                                          OnContent="Time"
+                                          OffContent="Distance"
+                                          IsOn="{Binding IsTimeBased}"/>
+                        <view:RotaryControl Grid.Row="1" FontBrush="White" FontSize="10" Foreground="Black" Background="Transparent" >
+                            <view:RotaryControl.PointerFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="#DDDDDD" Offset="0"/>
+                                    <GradientStop Color="#AAAAAA" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.PointerFill>
+
+                            <view:RotaryControl.OuterDialFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Black" Offset="0"/>
+                                    <GradientStop Color="Gray" Offset="0.5"/>
+                                    <GradientStop Color="Black" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.OuterDialFill>
+                            <view:RotaryControl.OuterDialBorder>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Gray" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.5"/>
+                                    <GradientStop Color="Gray" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.OuterDialBorder>
+                            <view:RotaryControl.OuterDialBorderThickness>3</view:RotaryControl.OuterDialBorderThickness>
+
+                            <view:RotaryControl.InnerDialRadius>0</view:RotaryControl.InnerDialRadius>
+                            <view:RotaryControl.InnerDialFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="White" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.5"/>
+                                    <GradientStop Color="White" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.InnerDialFill>
+
+                            <view:RotaryControl.LabelDialRadius>48</view:RotaryControl.LabelDialRadius>
+
+                            <view:RotaryControl.MajorTickDialRadius>65.5</view:RotaryControl.MajorTickDialRadius>
+                            <view:RotaryControl.MajorTickLength>6</view:RotaryControl.MajorTickLength>
+                            <view:RotaryControl.NumberOfMajorTicks>9</view:RotaryControl.NumberOfMajorTicks>
+                            <view:RotaryControl.MajorTickIncrement>45</view:RotaryControl.MajorTickIncrement>
+                            <view:RotaryControl.MajorTickBrush>White</view:RotaryControl.MajorTickBrush>
+                            <view:RotaryControl.NumberOfMinorTicks>4</view:RotaryControl.NumberOfMinorTicks>
+                            <view:RotaryControl.MinorTickBrush>White</view:RotaryControl.MinorTickBrush>
+
+                            <view:RotaryControl.StartAngleInDegrees>0</view:RotaryControl.StartAngleInDegrees>
+                            <view:RotaryControl.EndAngleInDegrees>359</view:RotaryControl.EndAngleInDegrees>
+
+                            <view:RotaryControl.PointerAxleFill>
+                                <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                    <GradientStop Color="Gray" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.5"/>
+                                    <GradientStop Color="Gray" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </view:RotaryControl.PointerAxleFill>
+                            <view:RotaryControl.PointerLength>75</view:RotaryControl.PointerLength>
+                            <view:RotaryControl.PointerWidth>3</view:RotaryControl.PointerWidth>
+                            <view:RotaryControl.PointerType>standard</view:RotaryControl.PointerType>
+
+                            <view:RotaryControl.SegmentThickness>5</view:RotaryControl.SegmentThickness>
+                            <view:RotaryControl.SegmentRadius>75</view:RotaryControl.SegmentRadius>
+                            <view:RotaryControl.Segments>
+                                <x:Array Type="{x:Type view:RotaryControlSegment}" >
+                                    <view:RotaryControlSegment Fill="YellowGreen" AngleInDegrees="359"/><!---->
+                                    <!--<view:RotaryControlSegment Fill="Gold" AngleInDegrees="30"/>
+                                    <view:RotaryControlSegment Fill="Orange" AngleInDegrees="30"/>
+                                    <view:RotaryControlSegment Fill="Crimson" AngleInDegrees="30"/>-->
+                                </x:Array>
+                            </view:RotaryControl.Segments>
+                        </view:RotaryControl>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label>Turns</Label>
+                                <TextBox Grid.Column="1" Width="60" />
+                            </Grid>
+
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label HorizontalAlignment="Center">Steps</Label>
+                                <TextBox Grid.Column="1" Width="60"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Expander>
+
+            <!--Bottom Right-->
+            <!--MultiRange Slider-->
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Sub movements" FontWeight="Bold"/>
+                <TextBlock Grid.Row="1" Text="*Double click slider bar to create new movement segment" 
+                           Padding="5,0,0,0" TextWrapping="Wrap"
+                           Background="Gray"/>
+                <Canvas Grid.Row="3">
+                    <iconPacks:PackIconMaterialDesign x:Name="AddNewItemHint" Kind="AddLocation" 
+                                                      Visibility="Hidden"
+                                                      Foreground="Green" 
+                                                      Margin="-13 -20 0 0" 
+                                                      Width="25" 
+                                                      Height="25"/>
+                </Canvas>
+                <InWit:WitMultiRangeSlider Grid.Row="3" x:Name="Slider"
+          MouseMove="Slider_MouseMove"
+                        MouseEnter="Slider_MouseEnter"
+                        MouseLeave="Slider_MouseLeave"
+                        ItemsSource="{Binding RangeItems}" SelectedItem="{Binding SelectedRange, Mode=TwoWay}" Margin="0,3,0,3"
+                        LeftValueBinding="From" RightValueBinding="To"
+                        Minimum="{Binding SliderMinimum}" Maximum="{Binding SliderMaximum}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MultiRangeSliderBarClicked">
                             <U:InvokeCommandActionWithParam Command="{Binding InsertRangeCmd}"  
-                                                                CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=InvokeParameter}"/>
+                                                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=InvokeParameter}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-            </InWit:WitMultiRangeSlider>
-            <DataGrid Grid.Row="4"  ItemsSource="{Binding RangeItems}" SelectedItem="{Binding SelectedRange, Mode=TwoWay}" CanUserAddRows="False" CanUserDeleteRows="False"
-                           CanUserReorderColumns="False" AutoGenerateColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Width="*" Header="Name" Binding="{Binding Name, Mode=TwoWay}" SortMemberPath="Name"/>
-                    <DataGridTextColumn Width="Auto" MinWidth="40" Header="From" Binding="{Binding From}" IsReadOnly="True" SortMemberPath="From"/>
-                    <DataGridTextColumn Width="Auto" MinWidth="40" Header="To" Binding="{Binding To}" IsReadOnly="True" SortMemberPath="To"/>
-                </DataGrid.Columns>
-            </DataGrid>
-
-            <!--<Button Width="100" Height="100" Grid.Row="4" x:Name="btn">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Border CornerRadius="2" BorderThickness="3" BorderBrush="DarkGray" x:Name="border">
-                                        <Border.ContextMenu>
-                                            <ContextMenu x:Name="cmenu">
-                                                <TextBlock>Information</TextBlock>
-                                            </ContextMenu>
-                                        </Border.ContextMenu>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="ContextMenu.IsOpen" Value="True" TargetName="cmenu"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>-->
+                </InWit:WitMultiRangeSlider>
+                <DataGrid Grid.Row="4"  ItemsSource="{Binding RangeItems}" SelectedItem="{Binding SelectedRange, Mode=TwoWay}" CanUserAddRows="False" CanUserDeleteRows="False"
+                               CanUserReorderColumns="False" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="*" Header="Name" Binding="{Binding Name, Mode=TwoWay}" SortMemberPath="Name"/>
+                        <DataGridTextColumn Width="Auto" MinWidth="40" Header="From" Binding="{Binding From}" IsReadOnly="True" SortMemberPath="From"/>
+                        <DataGridTextColumn Width="Auto" MinWidth="40" Header="To" Binding="{Binding To}" IsReadOnly="True" SortMemberPath="To"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
